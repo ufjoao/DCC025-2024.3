@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class Conta 
 {
     private int numeroDaConta;
-    private int id;
+    private int id;//indice que representa a conta em questão no ArrayList da classe Gerenciamento
     private float saldo;
     private ArrayList<String> movimentacoes;
     
@@ -22,6 +22,7 @@ public class Conta
         this.numeroDaConta = numeroDaConta;
         this.id = id;
         movimentacoes = new ArrayList(null);
+        saldo = 0;
     }
     
     public float getSaldo()
@@ -42,10 +43,7 @@ public class Conta
     
     boolean verificaNumeroDaConta(int numeroDaConta)
     {
-        if(this.numeroDaConta == numeroDaConta)
-            return true;
-        else
-            return false;
+        return this.numeroDaConta == numeroDaConta;
     }
     
     void deposito(float valor)

@@ -71,4 +71,18 @@ public class Gerenciamento
     
     //inserir os metodos das operacoes e o loop
     
+    public void menu()
+    {
+        int verificador = 1;
+        
+        //cadastrar alguns usuarios automaticamente aqui
+        
+        while(verificador != 0)//loop de menu
+        {
+            //dar a opção de cadastrar usuários manualmente
+            
+            //dar a opção de logar e realizar as funções possíveis para cada tipo usuário
+        }
+    }
+    
 }
