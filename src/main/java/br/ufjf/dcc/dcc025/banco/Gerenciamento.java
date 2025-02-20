@@ -82,6 +82,10 @@ public class Gerenciamento
             //dar a opção de cadastrar usuários manualmente
             
             //dar a opção de logar e realizar as funções possíveis para cada tipo usuário
+            
+           //cliente tem Transferencia, consulta de saldo, consulta de extrato, investimentos de renda fixa e variável e solicitação de crédito
+           //caixa tem atendimento de saque, processamento de depositos e transferencia
+           //gerente tem apoio em movimentações, cadastrar uma nova opção de renda fixa, cadastrar renda variável e avaliação de crédito
         }
     }
     
