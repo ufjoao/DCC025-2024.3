@@ -20,10 +20,10 @@ public class Gerenciamento
     
     public Gerenciamento()
     {
-        clientes = new ArrayList();
-        caixas = new ArrayList();
-        gerentes = new ArrayList();
-        contas = new ArrayList();
+        clientes = new ArrayList<Cliente>();
+        caixas = new ArrayList<Caixa>();
+        gerentes = new ArrayList<Gerente>();
+        contas = new ArrayList<Conta>();
     }
     
     public void transferencia()
@@ -52,13 +52,15 @@ public class Gerenciamento
                         System.out.println("Senha para a confirmacao da transferencia:");
                         String senha = info.nextLine();
                         
-                        if(senha.equals(clientes.getSenha()))
+                        if(clientes.get(i).verificaSenha(senha))
                         {
-                            contas.get(i).saque(valor);
+                            //se a senha for valida, entra e faz a transferencia
+                            contas.get(i).saque(valor); //saca da conta de origem e deposita na conta de destino
                             contas.get(j).deposito(valor);
 
-                            String movimentacao = "Transferencia \nValor: R$ " + valor;
-                            contas.get(i).setMovimentacoes(movimentacao);
+                            String movimentacao = "Transferencia \nValor: R$ " + valor;//string com os dados da transferencia, passada para o
+                            contas.get(i).setMovimentacoes(movimentacao);              //setMovimentacoes, que armazena Strings para quando for necessario
+                                                                                       //gerar um extrato
                         }
                     }
                 }

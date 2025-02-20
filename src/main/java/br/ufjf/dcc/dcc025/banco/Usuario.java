@@ -33,8 +33,8 @@ public class Usuario
         return documento;
     }
     
-    public String getSenha()
+    public boolean verificaSenha(String senha)
     {
-        return senha;
+        return senha.equals(this.senha);
     }
 }
