@@ -10,7 +10,7 @@ public class Cliente extends Usuario {
     private String nome;
     private String cpf;
     private int senha;
-    private List<Conta> contas; // Um cliente pode ter várias contas
+    private ArrayList<Conta> contas; // Um cliente pode ter várias contas
 
     // Construtor
     public Cliente(String nome, String cpf, int senha) {
@@ -34,8 +34,8 @@ public class Cliente extends Usuario {
         contas.add(conta);
     }
 
-    public void criarConta(int numeroConta) {
-        this.contas.add(new Conta(numeroConta, contas.indexOf(this)));
+    public void criarConta(int numeroConta, int senha) {
+        this.contas.add(new Conta(numeroConta, "0001", senha));
     }
 
     public void realizarDeposito(float valor) {

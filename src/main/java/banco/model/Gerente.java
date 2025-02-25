@@ -4,8 +4,6 @@
  */
 package banco.model;
 
-import banco.model.Cliente;
-
 /**
  *
  * @author rodri

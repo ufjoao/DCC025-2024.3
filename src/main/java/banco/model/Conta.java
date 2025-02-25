@@ -4,6 +4,7 @@
  */
 package banco.model;
 
+import banco.exception.Validador;
 import java.util.ArrayList;
 
 /**
@@ -13,19 +14,29 @@ import java.util.ArrayList;
 public class Conta {
 
     private int numeroDaConta;
-    private int id;//indice que representa a conta em questão no ArrayList da classe Gerenciamento
+    private String agencia;
     private float saldo;
+    private int senha;
     private ArrayList<String> movimentacoes;
+    private static ArrayList<Integer> contasRegistradas;
 
-    public Conta(int numeroDaConta, int id) {
-        this.numeroDaConta = numeroDaConta;
-        movimentacoes = new ArrayList(null);
-        this.id = id;
-        saldo = 0;
+    public Conta(int numero, String agencia, int senha) {
+        Validador.validarNumeroConta(numero);
+        this.numeroDaConta = numero;
+        this.agencia = "0001";
+        this.saldo = 0;
+        Validador.validarSenhaDaConta(senha, numero);
+        this.senha = senha;
+        this.movimentacoes = new ArrayList<>();
+        contasRegistradas.add(numero);
     }
 
-    public void setId(int i) {
-        this.id = i;
+    public boolean verificarSenha(int senhaInformada) {
+        return this.senha == senhaInformada;
+    }
+
+    public String getAgencia() {
+        return agencia;
     }
 
     public float getSaldo() {
@@ -40,8 +51,12 @@ public class Conta {
         return numeroDaConta;
     }
 
+    public ArrayList<String> getMovimentacoes() {
+        return movimentacoes;
+    }
+
     public void setMovimentacoes(String movimentacao) {
-        //vai armaazenar uma string com o tipo de movimentação e o valor
+        //vai armazenar uma string com o tipo de movimentação e o valor
         movimentacoes.add(movimentacao);
     }
 
@@ -49,12 +64,25 @@ public class Conta {
         return this.numeroDaConta == numeroDaConta;
     }
 
-    void deposito(float valor) {
+    public void deposito(float valor) {
+        Validador.validarDeposito(valor);
         saldo += valor;
+        movimentacoes.add("Depósito de R$ " + valor);
     }
 
     void saque(float valor) {
+        Validador.validarSaque(valor, saldo);
         saldo -= valor;
+    }
+
+    public void transferir(Conta destino, float valor, int senha) {
+        Validador.validarSenha(senha);
+        Validador.validarTransferencia(valor, destino, contasRegistradas);
+        Validador.validarSaque(valor, saldo);
+        this.saque(valor);
+        Validador.validarDeposito(valor);
+        destino.deposito(valor);
+        movimentacoes.add("Transferência de R$ " + valor + " para conta " + destino.getNumeroDaConta());
     }
 
     void consultaSaldo() {

@@ -44,7 +44,7 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public boolean verificaSenha(String senha) {
-        return senha.equals(this.senha);
+    public boolean verificaSenha(int senha) {
+        return senha == this.senha;
     }
 }

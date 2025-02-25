@@ -4,6 +4,10 @@
  */
 package banco.exception;
 
+import banco.model.Conta;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author joao
@@ -127,6 +131,27 @@ public class Validador {
         }
     }
 
+// Validação do número da conta (como inteiro)
+    public static void validarNumeroConta(int senha) {
+        // Convertendo a senha e o número da conta para String para facilitar as comparações
+        String senhaStr = String.format("%06d", senha);  // Garante que a senha tenha 6 dígitos
+
+        // Verificar se a senha tem exatamente 6 dígitos
+        if (senhaStr.length() != 6) {
+            throw new ValidacaoException("O número da conta deve conter exatamente 6 dígitos numéricos.");
+        }
+
+        // Verificar se a senha tem números em sequência (ex: 123456)
+        if (temSequencia(senhaStr)) {
+            throw new ValidacaoException("O número da conta não pode conter números em sequência.");
+        }
+
+        // Verificar se a senha tem números repetidos (ex: 111111)
+        if (temCaractereRepetido(senhaStr)) {
+            throw new ValidacaoException("O número da conta não pode conter números repetidos.");
+        }
+    }
+
     public static void validarSenhaDaConta(int senha, int numeroConta) {
         // Convertendo a senha e o número da conta para String para facilitar as comparações
         String senhaStr = String.format("%06d", senha);  // Garante que a senha tenha 6 dígitos
@@ -171,5 +196,35 @@ public class Validador {
             }
         }
         return false;
+    }
+
+    // Valida se um valor de depósito é válido
+    public static void validarDeposito(double valor) {
+        if (valor <= 0) {
+            throw new ValidacaoException("O valor do depósito deve ser maior que zero.");
+        }
+    }
+
+    // Valida se um saque pode ser realizado
+    public static void validarSaque(double valor, double saldo) {
+        if (valor <= 0) {
+            throw new ValidacaoException("O valor do saque deve ser maior que zero.");
+        }
+        if (valor > saldo) {
+            throw new ValidacaoException("Saldo insuficiente para realizar o saque.");
+        }
+    }
+
+    // Valida se uma transferência pode ser realizada
+    public static void validarTransferencia(float valor, Conta destino, ArrayList<Integer> contasCadastradas) {
+        if (valor <= 0) {
+            throw new ValidacaoException("O valor da transferência deve ser maior que zero.");
+        }
+        if (destino == null) {
+            throw new ValidacaoException("Conta de destino inválida.");
+        }
+        if (!contasCadastradas.contains(destino.getNumeroDaConta())) {
+            throw new ValidacaoException("Conta de destino não encontrada.");
+        }
     }
 }
