@@ -2,20 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package br.ufjf.dcc.dcc025.banco;
+package banco.model;
+
+import banco.model.Cliente;
 
 /**
  *
  * @author rodri
  */
-public class Cliente extends Usuario
+public class Gerente extends Cliente
 {
     
-    public Cliente(String nome, String documento, int id, String senha) 
+    public Gerente(String nome, String documento, int id, String senha) 
     {
         super(nome, documento, id, senha);
     }
-    
-    
     
 }

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
-package br.ufjf.dcc.dcc025.banco;
+package banco.model;
 
 /**
  *
