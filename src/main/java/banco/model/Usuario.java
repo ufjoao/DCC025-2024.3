@@ -4,37 +4,47 @@
  */
 package banco.model;
 
+import banco.exception.Validador;
+
 /**
  *
  * @author rodri
  */
-public class Usuario 
-{
+public class Usuario {
+
     private String nome;
-    private String documento;
-    int id;
-    String senha;
-    
-    public Usuario(String nome, String documento, int id, String senha)
-    {
+    private String cpf;
+    int senha;
+
+    public Usuario(String nome, String cpf, int senha) {
+        Validador.validarNome(nome);
+        Validador.validarCpf(cpf);
+        Validador.validarSenha(senha);
+
         this.nome = nome;
-        this.documento = documento;
-        this.id = id;
+        this.cpf = cpf;
         this.senha = senha;
     }
-    
-    public String getNome()
-    {
+
+    public String getNome() {
         return nome;
     }
-    
-    public String getDocumento()
-    {
-        return documento;
+
+    public void setNome(String nome) {
+        Validador.validarNome(nome);
+        this.nome = nome;
     }
-    
-    public boolean verificaSenha(String senha)
-    {
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setSenha(int senha) {
+        Validador.validarSenha(senha);
+        this.senha = senha;
+    }
+
+    public boolean verificaSenha(String senha) {
         return senha.equals(this.senha);
     }
 }

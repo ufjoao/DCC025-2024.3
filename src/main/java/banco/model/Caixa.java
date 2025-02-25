@@ -8,12 +8,10 @@ package banco.model;
  *
  * @author rodri
  */
-public class Caixa extends Usuario
-{
-    
-    public Caixa(String nome, String documento, int id, String senha) 
-    {
-        super(nome, documento, id, senha);
+public class Caixa extends Usuario {
+
+    public Caixa(String nome, String cpf, int senha) {
+        super(nome, cpf, senha);
     }
-    
+
 }

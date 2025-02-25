@@ -10,12 +10,10 @@ import banco.model.Cliente;
  *
  * @author rodri
  */
-public class Gerente extends Cliente
-{
-    
-    public Gerente(String nome, String documento, int id, String senha) 
-    {
-        super(nome, documento, id, senha);
+public class Gerente extends Cliente {
+
+    public Gerente(String nome, String cpf, int senha) {
+        super(nome, cpf, senha);
     }
-    
+
 }

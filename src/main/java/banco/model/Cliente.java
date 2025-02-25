@@ -1,57 +1,25 @@
 package banco.model;
 
+import banco.exception.Validador;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cliente {
+public class Cliente extends Usuario {
 
     private String nome;
     private String cpf;
-    private String senha;
+    private int senha;
     private List<Conta> contas; // Um cliente pode ter várias contas
 
     // Construtor
-    public Cliente(String nome, String cpf, String senha) {
-        if (nome == null || nome.length() < 2) {
-            throw new IllegalArgumentException("Nome deve ter pelo menos 2 caracteres.");
-        }
-        if (!cpfValido(cpf)) {
-            throw new IllegalArgumentException("CPF inválido.");
-        }
-        if (senha == null || senha.length() < 6) {
-            throw new IllegalArgumentException("Senha deve ter pelo menos 6 caracteres.");
-        }
-
-        this.nome = nome;
-        this.cpf = cpf;
-        this.senha = senha;
-        this.contas = new ArrayList<>();
+    public Cliente(String nome, String cpf, int senha) {
+        super(nome, cpf, senha);
     }
 
-    // Getters e Setters
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        if (nome == null || nome.length() < 2) {
-            throw new IllegalArgumentException("Nome deve ter pelo menos 2 caracteres.");
-        }
-        this.nome = nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        if (senha == null || senha.length() < 6) {
-            throw new IllegalArgumentException("Senha deve ter pelo menos 6 caracteres.");
-        }
+    @Override
+    public void setSenha(int senha) {
+        Validador.validarSenhaDaConta(senha, contas.get(0).getNumeroDaConta());
         this.senha = senha;
     }
 
@@ -66,8 +34,31 @@ public class Cliente {
         contas.add(conta);
     }
 
-    // Método auxiliar para validar CPF (simplificado)
-    private boolean cpfValido(String cpf) {
-        return cpf != null && cpf.matches("\\d{11}"); // Apenas verifica se tem 11 dígitos numéricos
+    public void criarConta(int numeroConta) {
+        this.contas.add(new Conta(numeroConta, contas.indexOf(this)));
+    }
+
+    public void realizarDeposito(float valor) {
+        contas.get(contas.indexOf(this)).deposito(valor);
+    }
+
+    public void realizarSaque(float valor) {
+        contas.get(contas.indexOf(this)).saque(valor);
+    }
+
+    public void consultarSaldo() {
+        contas.get(contas.indexOf(this)).consultaSaldo();
+    }
+
+    public void gerarExtrato() {
+        contas.get(contas.indexOf(this)).gerarExtrato();
+    }
+
+    public boolean verificaNumeroDaConta(int numeroDaConta) {
+        return contas.get(contas.indexOf(this)).verificaNumeroDaConta(numeroDaConta);
+    }
+
+    public void registraMovimentacao(String movimentacao) {
+        contas.get(contas.indexOf(this)).setMovimentacoes(movimentacao);
     }
 }
