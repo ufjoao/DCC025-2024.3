@@ -19,7 +19,7 @@ public class Banco {
         Cliente c1 = new Cliente("Joao", "14397509638", 340725);
         Conta conta2 = new Conta(487596, 152436);
         Gerenciamento gerenciador = new Gerenciamento();
-        gerenciador.realizarTransferencia(c1, conta1, conta2, 150.50, 135498);
+        gerenciador.realizarTransferencia(c1, conta1, conta2, (float) 150.50, 135498);
 
         // Outra conta
     }
