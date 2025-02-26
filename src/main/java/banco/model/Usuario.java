@@ -10,18 +10,18 @@ import banco.exception.Validador;
  *
  * @author rodri
  */
-public class Usuario {
+public abstract class Usuario {
 
     private String nome;
     private String cpf;
-    int senha;
+    private int senha;
 
     protected Usuario() {}
     
     public Usuario(String nome, String cpf, int senha) {
         Validador.validarNome(nome);
         Validador.validarCpf(cpf);
-
+        
         this.nome = nome;
         this.cpf = cpf;
         this.senha = senha;

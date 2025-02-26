@@ -9,9 +9,17 @@ package banco.model;
  * @author rodri
  */
 public class Caixa extends Usuario {
-
     public Caixa(String nome, String cpf, int senha) {
         super(nome, cpf, senha);
     }
-
+    
+    public void realizarDeposito(Conta conta, float valor) {
+        conta.deposito(valor);
+        System.out.println("Depósito de R$" + valor + " realizado para " + conta.getDono().getNome());
+    }
+    
+    public void realizarSaque(Conta conta, float valor) {
+        conta.saque(valor);
+        System.out.println("Saque de R$" + valor + " realizado para " + conta.getDono().getNome());
+    }
 }

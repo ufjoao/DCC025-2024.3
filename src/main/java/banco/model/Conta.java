@@ -6,7 +6,6 @@ package banco.model;
 
 import banco.exception.Validador;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 
 /**

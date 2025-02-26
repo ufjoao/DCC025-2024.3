@@ -6,7 +6,6 @@ package banco.exception;
 
 import banco.model.Conta;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *

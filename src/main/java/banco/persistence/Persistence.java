@@ -4,11 +4,9 @@
  */
 package banco.persistence;
 
-import banco.model.Cliente;
 import banco.model.Conta;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.File;
 import java.io.IOException;
