@@ -5,6 +5,8 @@
 package banco.model;
 
 import banco.exception.Validador;
+import banco.persistence.Persistence;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 
 /**
@@ -13,14 +15,21 @@ import java.util.ArrayList;
  */
 public class Conta {
 
+    @JsonProperty("numeroDaConta")
     private int numeroDaConta;
     private String agencia;
+    @JsonProperty("saldo")
     private float saldo;
     private int senha;
+    @JsonProperty("movimentacoes")
     private ArrayList<String> movimentacoes;
-    private static ArrayList<Integer> contasRegistradas;
+    private static ArrayList<Conta> contasRegistradas = new ArrayList<>();
 
-    public Conta(int numero, String agencia, int senha) {
+    public Conta() {
+        this.movimentacoes = new ArrayList<>();
+    }
+
+    public Conta(int numero, int senha) {
         Validador.validarNumeroConta(numero);
         this.numeroDaConta = numero;
         this.agencia = "0001";
@@ -28,7 +37,11 @@ public class Conta {
         Validador.validarSenhaDaConta(senha, numero);
         this.senha = senha;
         this.movimentacoes = new ArrayList<>();
-        contasRegistradas.add(numero);
+        addContaRegistro();
+    }
+
+    private void addContaRegistro() {
+        Persistence.addConta(this);
     }
 
     public boolean verificarSenha(int senhaInformada) {
@@ -55,9 +68,12 @@ public class Conta {
         return movimentacoes;
     }
 
-    public void setMovimentacoes(String movimentacao) {
-        //vai armazenar uma string com o tipo de movimentação e o valor
-        movimentacoes.add(movimentacao);
+     public void adicionarMovimentacao(String movimentacao) {
+        if (movimentacao != null && !movimentacao.isEmpty()) {
+            this.movimentacoes.add(movimentacao);
+        } else {
+            throw new IllegalArgumentException("Movimentação não pode ser nula ou vazia.");
+        }
     }
 
     boolean verificaNumeroDaConta(int numeroDaConta) {

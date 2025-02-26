@@ -1,6 +1,7 @@
 package banco.model;
 
 import banco.exception.Validador;
+import banco.persistence.Persistence;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -8,10 +9,14 @@ public class Gerenciamento {
 
     // Método para realizar uma transferência
     public void realizarTransferencia(Cliente cliente, Conta contaOrigem, Conta contaDestino, float valor, int senha) {
+        ArrayList<Conta> contas = Persistence.carregarContas();
         if (cliente.verificaSenha(senha)) {
             if (contaOrigem.getSaldo() >= valor) {
                 contaOrigem.saque(valor);
+                contaOrigem.adicionarMovimentacao("Saque: " + valor);
                 contaDestino.deposito(valor);
+                contaDestino.adicionarMovimentacao("Depósito: " + valor);
+                Persistence.salvarContas(contas);
                 System.out.println("Transferência realizada com sucesso!");
             } else {
                 System.out.println("Saldo insuficiente para realizar a transferência.");

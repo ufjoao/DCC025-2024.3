@@ -216,14 +216,22 @@ public class Validador {
     }
 
     // Valida se uma transferência pode ser realizada
-    public static void validarTransferencia(float valor, Conta destino, ArrayList<Integer> contasCadastradas) {
+    public static void validarTransferencia(float valor, Conta destino, ArrayList<Conta> contasCadastradas) {
         if (valor <= 0) {
             throw new ValidacaoException("O valor da transferência deve ser maior que zero.");
         }
         if (destino == null) {
             throw new ValidacaoException("Conta de destino inválida.");
         }
-        if (!contasCadastradas.contains(destino.getNumeroDaConta())) {
+        boolean contaExiste = false;
+        for (Conta conta : contasCadastradas) {
+            if (conta.getNumeroDaConta() == destino.getNumeroDaConta()) {
+                contaExiste = true;
+                break;  // Para o loop ao encontrar a conta
+            }
+        }
+
+        if (!contaExiste) {
             throw new ValidacaoException("Conta de destino não encontrada.");
         }
     }

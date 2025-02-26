@@ -35,7 +35,7 @@ public class Cliente extends Usuario {
     }
 
     public void criarConta(int numeroConta, int senha) {
-        this.contas.add(new Conta(numeroConta, "0001", senha));
+        this.contas.add(new Conta(numeroConta, senha));
     }
 
     public void realizarDeposito(float valor) {
@@ -59,6 +59,6 @@ public class Cliente extends Usuario {
     }
 
     public void registraMovimentacao(String movimentacao) {
-        contas.get(contas.indexOf(this)).setMovimentacoes(movimentacao);
+        contas.get(contas.indexOf(this)).adicionarMovimentacao(movimentacao);
     }
 }
