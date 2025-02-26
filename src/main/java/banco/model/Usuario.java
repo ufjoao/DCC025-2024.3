@@ -16,10 +16,11 @@ public class Usuario {
     private String cpf;
     int senha;
 
+    protected Usuario() {}
+    
     public Usuario(String nome, String cpf, int senha) {
         Validador.validarNome(nome);
         Validador.validarCpf(cpf);
-        Validador.validarSenha(senha);
 
         this.nome = nome;
         this.cpf = cpf;

@@ -1,21 +1,36 @@
 package banco.model;
 
-import banco.exception.Validador;
 import banco.persistence.Persistence;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Gerenciamento {
 
     // Método para realizar uma transferência
     public void realizarTransferencia(Cliente cliente, Conta contaOrigem, Conta contaDestino, float valor, int senha) {
-        ArrayList<Conta> contas = Persistence.carregarContas();
+        ArrayList<Conta> contas = Persistence.carregarContas(); // Carrega as contas do JSON
+
+        if (!cliente.verificaSenha(senha)) {
+            System.out.println("Senha incorreta. Transferência não realizada.");
+            return;
+        }
+
+        // Buscar as instâncias corretas na lista carregada
+        Conta origem = encontrarConta(contas, contaOrigem.getNumeroDaConta());
+        Conta destino = encontrarConta(contas, contaDestino.getNumeroDaConta());
+
+        if (origem == null || destino == null) {
+            System.out.println("Conta de origem ou destino não encontrada.");
+            return;
+        }
+
         if (cliente.verificaSenha(senha)) {
-            if (contaOrigem.getSaldo() >= valor) {
-                contaOrigem.saque(valor);
-                contaOrigem.adicionarMovimentacao("Saque: " + valor);
-                contaDestino.deposito(valor);
-                contaDestino.adicionarMovimentacao("Depósito: " + valor);
+            if (origem.getSaldo() >= valor) {
+                origem.saque(valor);
+                origem.adicionarMovimentacao("Transferência enviada para " + destino.getDono().getNome() + " no valor de: " + valor);
+                destino.deposito(valor);
+                destino.adicionarMovimentacao("Transferência recebida de " + cliente.getNome() + " no valor de: " + valor);
+
+                // Salva os clientes atualizados no JSON
                 Persistence.salvarContas(contas);
                 System.out.println("Transferência realizada com sucesso!");
             } else {
@@ -24,6 +39,15 @@ public class Gerenciamento {
         } else {
             System.out.println("Senha incorreta. Transferência não realizada.");
         }
+    }
+
+    private Conta encontrarConta(ArrayList<Conta> contas, int numeroConta) {
+        for (Conta conta : contas) {
+            if (conta.getNumeroDaConta() == numeroConta) {
+                return conta;
+            }
+        }
+        return null; // Retorna null se a conta não for encontrada
     }
 
     // Método para realizar um saque

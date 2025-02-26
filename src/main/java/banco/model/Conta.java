@@ -5,8 +5,8 @@
 package banco.model;
 
 import banco.exception.Validador;
-import banco.persistence.Persistence;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 
 /**
@@ -23,13 +23,15 @@ public class Conta {
     private int senha;
     @JsonProperty("movimentacoes")
     private ArrayList<String> movimentacoes;
+    @JsonProperty("dono")
+    private Cliente dono;
     private static ArrayList<Conta> contasRegistradas = new ArrayList<>();
 
     public Conta() {
         this.movimentacoes = new ArrayList<>();
     }
 
-    public Conta(int numero, int senha) {
+    public Conta(int numero, int senha, Cliente dono) {
         Validador.validarNumeroConta(numero);
         this.numeroDaConta = numero;
         this.agencia = "0001";
@@ -37,11 +39,16 @@ public class Conta {
         Validador.validarSenhaDaConta(senha, numero);
         this.senha = senha;
         this.movimentacoes = new ArrayList<>();
+        this.dono = dono;
         addContaRegistro();
     }
 
     private void addContaRegistro() {
-        Persistence.addConta(this);
+        dono.addContaRegistro(this);
+    }
+    
+    public Cliente getDono(){
+        return dono;
     }
 
     public boolean verificarSenha(int senhaInformada) {
@@ -75,6 +82,10 @@ public class Conta {
             throw new IllegalArgumentException("Movimentação não pode ser nula ou vazia.");
         }
     }
+     
+     public void setMovimentacoes(ArrayList<String> movimentacoesTotais){
+         movimentacoes = movimentacoesTotais;
+     }
 
     boolean verificaNumeroDaConta(int numeroDaConta) {
         return this.numeroDaConta == numeroDaConta;
@@ -83,7 +94,6 @@ public class Conta {
     public void deposito(float valor) {
         Validador.validarDeposito(valor);
         saldo += valor;
-        movimentacoes.add("Depósito de R$ " + valor);
     }
 
     void saque(float valor) {

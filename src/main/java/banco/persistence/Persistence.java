@@ -4,6 +4,7 @@
  */
 package banco.persistence;
 
+import banco.model.Cliente;
 import banco.model.Conta;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,21 +15,9 @@ import java.util.ArrayList;
 
 public class Persistence {
 
-    private static final String ARQUIVO_CONTAS = "src/main/java/banco/persistence/contas.json";
+    private static final String ARQUIVO_CONTAS = "src/main/java/banco/persistence/contas.json";  // Caminho do arquivo
 
-    // Método para salvar contas no arquivo JSON
-    public static void salvarContas(ArrayList<Conta> contas) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            // Escreve os dados no arquivo
-            mapper.writeValue(new File(ARQUIVO_CONTAS), contas);
-            System.out.println("Contas salvas com sucesso!");
-        } catch (IOException e) {
-            System.err.println("Erro ao salvar contas: " + e.getMessage());
-        }
-    }
-
-    // Método para carregar contas do arquivo JSON
+    // Carregar contas do arquivo JSON
     public static ArrayList<Conta> carregarContas() {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayList<Conta> contas = new ArrayList<>();
@@ -46,11 +35,31 @@ public class Persistence {
         return contas;
     }
 
-    // Método para adicionar uma conta ao registro
-    public static void addConta(Conta conta) {
-        // Adiciona a conta à lista, salvando ela ao mesmo tempo
-        ArrayList<Conta> contas = carregarContas(); // Carrega as contas
-        contas.add(conta); // Adiciona a conta nova
-        salvarContas(contas); // Salva novamente todas as contas
+    // Método para salvar contas no arquivo JSON
+    public static void salvarContas(ArrayList<Conta> contas) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            objectMapper.writeValue(new File(ARQUIVO_CONTAS), contas);
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar contas: " + e.getMessage());
+        }
+    }
+
+    public static void addConta(Conta novaConta) {
+        ArrayList<Conta> contas = carregarContas(); // Carrega todas as contas do JSON
+        boolean contaExiste = false;
+        for (Conta conta : contas) {
+            if (conta.getNumeroDaConta() == novaConta.getNumeroDaConta()) {
+                // Atualiza os dados da conta existente
+                conta.setSaldo(novaConta.getSaldo());
+                conta.setMovimentacoes(novaConta.getMovimentacoes());
+                contaExiste = true;
+                break;
+            }
+        }
+        if (!contaExiste) {
+            contas.add(novaConta); // Adiciona a conta apenas se não existir
+        }
+        salvarContas(contas); // Salva a lista atualizada no JSON
     }
 }

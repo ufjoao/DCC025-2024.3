@@ -1,7 +1,9 @@
 package banco.model;
 
 import banco.exception.Validador;
-
+import banco.persistence.Persistence;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +14,15 @@ public class Cliente extends Usuario {
     private int senha;
     private ArrayList<Conta> contas; // Um cliente pode ter várias contas
 
-    // Construtor
-    public Cliente(String nome, String cpf, int senha) {
+    @JsonCreator
+    public Cliente(@JsonProperty("nome") String nome,
+                   @JsonProperty("cpf") String cpf,
+                   @JsonProperty("senha") int senha) {
         super(nome, cpf, senha);
+    }
+    
+    public Cliente() {
+        super("", "", 0); 
     }
 
     @Override
@@ -34,8 +42,12 @@ public class Cliente extends Usuario {
         contas.add(conta);
     }
 
+    public void addContaRegistro(Conta conta) {
+        Persistence.addConta(conta);
+    }
+
     public void criarConta(int numeroConta, int senha) {
-        this.contas.add(new Conta(numeroConta, senha));
+        this.contas.add(new Conta(numeroConta, senha, this));
     }
 
     public void realizarDeposito(float valor) {
