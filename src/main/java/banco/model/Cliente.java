@@ -12,7 +12,7 @@ public class Cliente extends Usuario {
     private String nome;
     private String cpf;
     private int senha;
-    private ArrayList<Conta> contas; // Um cliente pode ter várias contas
+    private ArrayList<Conta> contas = new ArrayList<>(); // Um cliente pode ter várias contas
 
     @JsonCreator
     public Cliente(@JsonProperty("nome") String nome,

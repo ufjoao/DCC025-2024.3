@@ -7,6 +7,7 @@ package banco.persistence;
 import banco.model.Cliente;
 import banco.model.Conta;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.File;
@@ -16,10 +17,11 @@ import java.util.ArrayList;
 public class Persistence {
 
     private static final String ARQUIVO_CONTAS = "src/main/java/banco/persistence/contas.json";  // Caminho do arquivo
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT); // Ativa a indentação automática
 
     // Carregar contas do arquivo JSON
     public static ArrayList<Conta> carregarContas() {
-        ObjectMapper objectMapper = new ObjectMapper();
         ArrayList<Conta> contas = new ArrayList<>();
 
         try {
@@ -37,9 +39,8 @@ public class Persistence {
 
     // Método para salvar contas no arquivo JSON
     public static void salvarContas(ArrayList<Conta> contas) {
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            objectMapper.writeValue(new File(ARQUIVO_CONTAS), contas);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(ARQUIVO_CONTAS), contas);
         } catch (IOException e) {
             System.out.println("Erro ao salvar contas: " + e.getMessage());
         }
