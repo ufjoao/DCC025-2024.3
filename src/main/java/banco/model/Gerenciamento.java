@@ -2,13 +2,16 @@ package banco.model;
 
 import banco.persistence.Persistence;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Gerenciamento {
-
+    
     // Método para realizar uma transferência
     public void realizarTransferencia(Cliente cliente, Conta contaOrigem, Conta contaDestino, float valor, int senha) {
         ArrayList<Conta> contas = Persistence.carregarContas(); // Carrega as contas do JSON
-
+        List<TransferenciaMilhao> transferenciasPendentes = new ArrayList<>();
+        
         if (!cliente.verificaSenha(senha)) {
             System.out.println("Senha incorreta. Transferência não realizada.");
             return;
@@ -25,14 +28,19 @@ public class Gerenciamento {
 
         if (cliente.verificaSenha(senha)) {
             if (origem.getSaldo() >= valor) {
-                origem.saque(valor);
-                origem.adicionarMovimentacao("Transferência enviada para " + destino.getDono().getNome() + " no valor de: " + valor);
-                destino.deposito(valor);
-                destino.adicionarMovimentacao("Transferência recebida de " + cliente.getNome() + " no valor de: " + valor);
+               if(valor >= 1000000)
+               {
+                   transferenciasPendentes.add(new TransferenciaMilhao(cliente, origem, destino, valor));
+                   return;
+               }
+               origem.saque(valor);
+               origem.adicionarMovimentacao("Transferência enviada para " + destino.getDono().getNome() + " no valor de: " + valor);
+               destino.deposito(valor);
+               destino.adicionarMovimentacao("Transferência recebida de " + cliente.getNome() + " no valor de: " + valor);
 
                 // Salva os clientes atualizados no JSON
-                Persistence.salvarContas(contas);
-                System.out.println("Transferência realizada com sucesso!");
+               Persistence.salvarContas(contas);
+               System.out.println("Transferência realizada com sucesso!"); 
             } else {
                 System.out.println("Saldo insuficiente para realizar a transferência.");
             }
@@ -89,6 +97,59 @@ public class Gerenciamento {
             System.out.println("Senha incorreta. Investimento não cadastrado.");
         }
     }
+    
+    public void apoioMovimentacao(Gerente gerente, int senha) {
+        Scanner teclado = new Scanner(System.in);
+        List<TransferenciaMilhao> transferenciasPendentes = new ArrayList<>();
+        if(gerente.verificaSenha(senha)) {
+           for (int i = 0; i < transferenciasPendentes.size(); i++) {
+              TransferenciaMilhao atual = transferenciasPendentes.get(i);
+              System.out.println("O cliente " + atual.getNomeCliente() + " deseja transferir " + atual.getValor() + " reais da sua conta " + atual.getNumeroOrigem() + " para a conta " + atual.getNumeroDestino() + " do cliente " + atual.getNomeDestino()+ "\n");
+              System.out.println("O cliente possui " + atual.getSaldoCliente() + " reais na respectiva conta\n");
+              while (true) {
+                 System.out.println("Você deseja permitir a transação? (sim/não)");
+                 String resposta = teclado.nextLine().trim().toLowerCase();
+
+                 if(resposta.equals("sim")) {
+                     atual.executarTransferencia();
+                     System.out.println("Permissão Concedida");
+                     break;
+                 } 
+                 else if(resposta.equals("não")) {
+                     System.out.println("Permissão Negada");
+                     break;
+                 } 
+                 else  {
+                     System.out.println("Resposta inválida. Por favor, responda com 'sim' ou 'não'.");
+                 }
+              } 
+           }
+        }
+      }
+    }
+
+
+         
+                            
+    /*
+    for (int i = 0; i < listaDeFuncoes.size(); i++) {
+            System.out.println("Resultado da função " + (i + 1) + ": " + listaDeFuncoes.get(i).apply(valor));
+        }
+    
+    TransferenciaMilhao atual = transferenciasPendentes.get(0);
+            System.out.println(atual.getNomeCliente());
+    
+    System.out.println("Essa operação pode ser realizada? (sim ou nao)\n");
+              int escolha = teclado.nextInt();
+              if(escolha == 1)
+              {
+                  atual.executarTransferencia();
+              }
+              
+    
+    
+    
+    */
 
     // Outros métodos para outras operações podem ser adicionados aqui
-}
+
