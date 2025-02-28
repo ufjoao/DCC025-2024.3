@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cliente extends Usuario {
+public class Cliente extends Usuario 
+{
 
     private String nome;
     private String cpf;
@@ -17,60 +18,74 @@ public class Cliente extends Usuario {
     @JsonCreator
     public Cliente(@JsonProperty("nome") String nome,
                    @JsonProperty("cpf") String cpf,
-                   @JsonProperty("senha") int senha) {
+                   @JsonProperty("senha") int senha) 
+    {
         super(nome, cpf, senha);
     }
     
-    public Cliente() {
+    public Cliente() 
+    {
         super("", "", 0); 
     }
 
     @Override
-    public void setSenha(int senha) {
+    public void setSenha(int senha) 
+    {
         Validador.validarSenhaDaConta(senha, contas.get(0).getNumeroDaConta());
         this.senha = senha;
     }
 
-    public List<Conta> getContas() {
+    public List<Conta> getContas() 
+    {
         return contas;
     }
 
-    public void adicionarConta(Conta conta) {
-        if (conta == null) {
+    public void adicionarConta(Conta conta) 
+    {
+        if (conta == null) 
+        {
             throw new IllegalArgumentException("Conta não pode ser nula.");
         }
         contas.add(conta);
     }
 
-    public void addContaRegistro(Conta conta) {
+    public void addContaRegistro(Conta conta) 
+    {
         Persistence.addConta(conta);
     }
 
-    public void criarConta(int numeroConta, int senha) {
+    public void criarConta(int numeroConta, int senha) 
+    {
         this.contas.add(new Conta(numeroConta, senha, this));
     }
 
-    public void realizarDeposito(float valor) {
+    public void realizarDeposito(float valor) 
+    {
         contas.get(contas.indexOf(this)).deposito(valor);
     }
 
-    public void realizarSaque(float valor) {
+    public void realizarSaque(float valor) 
+    {
         contas.get(contas.indexOf(this)).saque(valor);
     }
 
-    public void consultarSaldo() {
+    public void consultarSaldo() 
+    {
         contas.get(contas.indexOf(this)).consultaSaldo();
     }
 
-    public void gerarExtrato() {
+    public void gerarExtrato() 
+    {
         contas.get(contas.indexOf(this)).gerarExtrato();
     }
 
-    public boolean verificaNumeroDaConta(int numeroDaConta) {
+    public boolean verificaNumeroDaConta(int numeroDaConta) 
+    {
         return contas.get(contas.indexOf(this)).verificaNumeroDaConta(numeroDaConta);
     }
 
-    public void registraMovimentacao(String movimentacao) {
+    public void registraMovimentacao(String movimentacao) 
+    {
         contas.get(contas.indexOf(this)).adicionarMovimentacao(movimentacao);
     }
 }
