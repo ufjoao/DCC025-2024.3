@@ -125,31 +125,8 @@ public class Gerenciamento {
               } 
            }
         }
-      }
     }
-
-
-         
-                            
-    /*
-    for (int i = 0; i < listaDeFuncoes.size(); i++) {
-            System.out.println("Resultado da função " + (i + 1) + ": " + listaDeFuncoes.get(i).apply(valor));
-        }
-    
-    TransferenciaMilhao atual = transferenciasPendentes.get(0);
-            System.out.println(atual.getNomeCliente());
-    
-    System.out.println("Essa operação pode ser realizada? (sim ou nao)\n");
-              int escolha = teclado.nextInt();
-              if(escolha == 1)
-              {
-                  atual.executarTransferencia();
-              }
-              
-    
-    
-    
-    */
-
+}
+  
     // Outros métodos para outras operações podem ser adicionados aqui
 
