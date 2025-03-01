@@ -2,8 +2,6 @@ package banco.model;
 
 import banco.persistence.Persistence;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 public class Gerenciamento
 {
@@ -64,7 +62,8 @@ public class Gerenciamento
                 // Salva os clientes atualizados no JSON
                Persistence.salvarContas(contas);
                System.out.println("Transferência realizada com sucesso!"); 
-            } else {
+            } else 
+            {
                 System.out.println("Saldo insuficiente para realizar a transferência.");
             }
         } else {
