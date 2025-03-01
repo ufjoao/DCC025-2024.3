@@ -30,7 +30,7 @@ public class Gerenciamento {
             if (origem.getSaldo() >= valor) {
                if(valor >= 1000000)
                {
-                   transferenciasPendentes.add(new TransferenciaMilhao(cliente, origem, destino, valor));
+                   //transferenciasPendentes.add(new TransferenciaMilhao(cliente, origem, destino, valor));
                    return;
                }
                origem.saque(valor);
@@ -99,7 +99,7 @@ public class Gerenciamento {
     }
     
     public void apoioMovimentacao(Gerente gerente, int senha) {
-        Scanner teclado = new Scanner(System.in);
+        /*Scanner teclado = new Scanner(System.in);
         List<TransferenciaMilhao> transferenciasPendentes = new ArrayList<>();
         if(gerente.verificaSenha(senha)) {
            for (int i = 0; i < transferenciasPendentes.size(); i++) {
@@ -124,7 +124,7 @@ public class Gerenciamento {
                  }
               } 
            }
-        }
+        }*/
     }
 }
 
