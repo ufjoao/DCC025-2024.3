@@ -156,4 +156,73 @@ public class Gerenciamento
     }
 
     // Outros métodos para outras operações podem ser adicionados aqui
+
+    public void apoioMovimentacao(Gerente gerente, int senha) {
+        Scanner teclado = new Scanner(System.in);
+        List<movimentacaoMilhao> transferenciasPendentes = new ArrayList<>();
+        if(gerente.verificaSenha(senha)) {
+           for (int i = 0; i < transferenciasPendentes.size(); i++) {
+              movimentacaoMilhao atual = transferenciasPendentes.get(i);
+              System.out.println("O cliente " + atual.getNomeCliente() + " deseja transferir " + atual.getValor() + " reais da sua conta " + atual.getNumeroOrigem() + " para a conta " + atual.getNumeroDestino() + " do cliente " + atual.getNomeDestino()+ "\n");
+              System.out.println("O cliente possui " + atual.getSaldoCliente() + " reais na respectiva conta\n");
+              while (true) {
+                 System.out.println("Você deseja permitir a transação? (sim/não)");
+                 String resposta = teclado.nextLine().trim().toLowerCase();
+
+                 if(resposta.equals("sim")) {
+                     atual.executarTransferencia();
+                     System.out.println("Permissão Concedida");
+                     break;
+                 } 
+                 else if(resposta.equals("não")) {
+                     System.out.println("Permissão Negada");
+                     break;
+                 } 
+                 else  {
+                     System.out.println("Resposta inválida. Por favor, responda com 'sim' ou 'não'.");
+                 }
+              } 
+           }
+        }
+    }
+    
+    public void apoioSaque(Gerente gerente, int senha) {
+        Scanner teclado = new Scanner(System.in);
+        List<saqueMilhao> saquesPendentes = new ArrayList<>();
+        if(gerente.verificaSenha(senha)) {
+           for (int i = 0; i < saquesPendentes.size(); i++) {
+              saqueMilhao atual = saquesPendentes.get(i);
+              System.out.println("O cliente " + atual.getNomeCliente() + " deseja sacar " + atual.getValor() + " reais da sua conta " + atual.getNumeroConta() + "\n");
+              System.out.println("O cliente possui " + atual.getSaldoCliente() + " reais na respectiva conta\n");
+              while (true) {
+                 System.out.println("Você deseja permitir o saque? (sim/não)");
+                 String resposta = teclado.nextLine().trim().toLowerCase();
+
+                 if(resposta.equals("sim")) {
+                     atual.executarSaque();
+                     System.out.println("Permissão Concedida");
+                     break;
+                 } 
+                 else if(resposta.equals("não")) {
+                     System.out.println("Permissão Negada");
+                     break;
+                 } 
+                 else  {
+                     System.out.println("Resposta inválida. Por favor, responda com 'sim' ou 'não'.");
+                 }
+              }
+           }
+        }
+    }
 }
+    
+    
+    
+
+
+
+
+
+
+
+
