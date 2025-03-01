@@ -3,7 +3,7 @@ package banco.model;
 import banco.persistence.Persistence;
 import java.util.ArrayList;
 
-public class Gerenciamento
+public class Gerenciamento 
 {
     //trabalhar com um ArrayList de usuarios
     //iniciar no construtor e acessar todas as funções de conta atraves dos clientes e caixas
@@ -45,7 +45,8 @@ public class Gerenciamento
         Conta origem = encontrarConta(contas, contaOrigem.getNumeroDaConta());
         Conta destino = encontrarConta(contas, contaDestino.getNumeroDaConta());
 
-        if (origem == null || destino == null) {
+        if (origem == null || destino == null) 
+        {
             System.out.println("Conta de origem ou destino não encontrada.");
             return;
         }
@@ -54,26 +55,32 @@ public class Gerenciamento
         {
             if (origem.getSaldo() >= valor) 
             {
-               origem.saque(valor);
-               origem.adicionarMovimentacao("Transferência enviada para " + destino.getDono().getNome() + " no valor de: " + valor);
-               destino.deposito(valor);
-               destino.adicionarMovimentacao("Transferência recebida de " + cliente.getNome() + " no valor de: " + valor);
+                origem.saque(valor);
+                origem.adicionarMovimentacao("Transferência enviada para " + destino.getDono().getNome() + " no valor de: " + valor);
+                destino.deposito(valor);
+                destino.adicionarMovimentacao("Transferência recebida de " + cliente.getNome() + " no valor de: " + valor);
 
                 // Salva os clientes atualizados no JSON
-               Persistence.salvarContas(contas);
-               System.out.println("Transferência realizada com sucesso!"); 
-            } else 
+                Persistence.salvarContas(contas);
+                System.out.println("Transferência realizada com sucesso!");
+            } 
+            else 
             {
                 System.out.println("Saldo insuficiente para realizar a transferência.");
             }
-        } else {
+        } 
+        else 
+        {
             System.out.println("Senha incorreta. Transferência não realizada.");
         }
     }
 
-    private Conta encontrarConta(ArrayList<Conta> contas, int numeroConta) {
-        for (Conta conta : contas) {
-            if (conta.getNumeroDaConta() == numeroConta) {
+    private Conta encontrarConta(ArrayList<Conta> contas, int numeroConta) 
+    {
+        for (Conta conta : contas) 
+        {
+            if (conta.getNumeroDaConta() == numeroConta) 
+            {
                 return conta;
             }
         }
@@ -82,44 +89,68 @@ public class Gerenciamento
 
     // Método para realizar um saque
     public void realizarSaque(Caixa caixa, Cliente cliente, Conta conta, float valor, int senha) {
-        if (cliente.verificaSenha(senha)) {
-            if (conta.getSaldo() >= valor) {
+        if (cliente.verificaSenha(senha)) 
+        {
+            if (conta.getSaldo() >= valor) 
+            {
                 conta.saque(valor);
                 System.out.println("Saque realizado com sucesso!");
-            } else {
+                //clientes.get(i).registraMovimentacao("Saque no valor de R$" + valor);
+            } 
+            else 
+            {
                 System.out.println("Saldo insuficiente.");
             }
-        } else {
+        } 
+        else 
+        {
             System.out.println("Senha incorreta. Saque não autorizado.");
         }
     }
 
     // Método para realizar um depósito
-    public void realizarDeposito(Caixa caixa, Conta conta, float valor) {
+    public void realizarDeposito(Caixa caixa, Conta conta, float valor) 
+    {
         conta.deposito(valor);
         System.out.println("Depósito realizado com sucesso!");
+        //clientes.get(i).registraMovimentacao("Depósito no valor de R$" + valor);
+    }
+
+    public void imprimirExtrato(int i)
+    {
+        clientes.get(i).gerarExtrato();
     }
 
     // Método para o gerente aprovar crédito
-    public void aprovarCredito(Gerente gerente, Cliente cliente, float valor, int senha) {
-        if (gerente.verificaSenha(senha)) {
+    public void aprovarCredito(Gerente gerente, Cliente cliente, float valor, int senha) 
+    {
+        if (gerente.verificaSenha(senha)) 
+        {
             // Aqui a lógica de aprovação pode envolver verificação de histórico de crédito
             System.out.println("Crédito aprovado para o cliente " + cliente.getNome());
-        } else {
+        } 
+        else 
+        {
             System.out.println("Senha incorreta. Aprovação de crédito não realizada.");
         }
     }
 
     // Método para cadastrar uma nova opção de investimento (pode ser realizado pelo gerente)
-    public void cadastrarInvestimento(Gerente gerente, String tipoInvestimento, double taxaRendimento, int senha) {
-        if (gerente.verificaSenha(senha)) {
+    public void cadastrarInvestimento(Gerente gerente, String tipoInvestimento, double taxaRendimento, int senha) 
+    {
+        if (gerente.verificaSenha(senha)) 
+        {
             // Lógica para cadastrar novo investimento no sistema
             System.out.println("Investimento de tipo " + tipoInvestimento + " com taxa " + taxaRendimento + "% cadastrado.");
-        } else {
+        } 
+        else 
+        {
             System.out.println("Senha incorreta. Investimento não cadastrado.");
         }
     }
-    
+
+    // Outros métodos para outras operações podem ser adicionados aqui
+
     public void apoioMovimentacao(Gerente gerente, int senha) {
         Scanner teclado = new Scanner(System.in);
         List<movimentacaoMilhao> transferenciasPendentes = new ArrayList<>();
@@ -152,5 +183,7 @@ public class Gerenciamento
 
 
 
-    // Outros métodos para outras operações podem ser adicionados aqui
+
+
+
 
