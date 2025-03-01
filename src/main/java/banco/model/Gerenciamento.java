@@ -10,7 +10,6 @@ public class Gerenciamento {
     // Método para realizar uma transferência
     public void realizarTransferencia(Cliente cliente, Conta contaOrigem, Conta contaDestino, float valor, int senha) {
         ArrayList<Conta> contas = Persistence.carregarContas(); // Carrega as contas do JSON
-        List<movimentacaoMilhao> transferenciasPendentes = new ArrayList<>();
         
         if (!cliente.verificaSenha(senha)) {
             System.out.println("Senha incorreta. Transferência não realizada.");
@@ -28,12 +27,6 @@ public class Gerenciamento {
 
         if (cliente.verificaSenha(senha)) {
             if (origem.getSaldo() >= valor) {
-               if(valor >= 1000000)
-               {
-                   transferenciasPendentes.add(new movimentacaoMilhao(cliente, origem, destino, valor));
-                   System.out.println("Solicitação realização de transferência acima de 1 milhão enviada para o gerente do banco\n");
-                   return;
-               }
                origem.saque(valor);
                origem.adicionarMovimentacao("Transferência enviada para " + destino.getDono().getNome() + " no valor de: " + valor);
                destino.deposito(valor);
@@ -101,6 +94,7 @@ public class Gerenciamento {
     
     public void apoioMovimentacao(Gerente gerente, int senha) {
         Scanner teclado = new Scanner(System.in);
+        
         List<movimentacaoMilhao> transferenciasPendentes = new ArrayList<>();
         if(gerente.verificaSenha(senha)) {
            for (int i = 0; i < transferenciasPendentes.size(); i++) {
