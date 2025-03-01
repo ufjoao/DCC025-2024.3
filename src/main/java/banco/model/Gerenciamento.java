@@ -5,13 +5,40 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Gerenciamento {
+public class Gerenciamento
+{
+    //trabalhar com um ArrayList de usuarios
+    //iniciar no construtor e acessar todas as funções de conta atraves dos clientes e caixas
+    //com isso, talvez, seja necessário alterar a Persistence também
     
+    private ArrayList<Cliente> clientes = new ArrayList<>();
+    private ArrayList<Caixa> caixas = new ArrayList<>();
+    private ArrayList<Gerente> gerentes = new ArrayList<>();
+
+    public Gerenciamento()
+    {
+        clientes = new ArrayList<>();  
+        caixas = new ArrayList<>();
+        gerentes = new ArrayList<>();
+    }
+    
+    public void cadastrarUsuario()
+    {
+        //os três valores abaixo serão inseridos pela tela, as informações abaixo são apenas exemplos
+        String nome = null;
+        String cpf = "12345678901";
+        int senha = 14725836;
+        
+        clientes.add(new Cliente(nome, cpf, senha));
+    }
+    
+
     // Método para realizar uma transferência
     public void realizarTransferencia(Cliente cliente, Conta contaOrigem, Conta contaDestino, float valor, int senha) {
         ArrayList<Conta> contas = Persistence.carregarContas(); // Carrega as contas do JSON
-        
-        if (!cliente.verificaSenha(senha)) {
+
+        if (!cliente.verificaSenha(senha)) 
+        {
             System.out.println("Senha incorreta. Transferência não realizada.");
             return;
         }
@@ -25,8 +52,10 @@ public class Gerenciamento {
             return;
         }
 
-        if (cliente.verificaSenha(senha)) {
-            if (origem.getSaldo() >= valor) {
+        if (cliente.verificaSenha(senha)) 
+        {
+            if (origem.getSaldo() >= valor) 
+            {
                origem.saque(valor);
                origem.adicionarMovimentacao("Transferência enviada para " + destino.getDono().getNome() + " no valor de: " + valor);
                destino.deposito(valor);
@@ -94,7 +123,6 @@ public class Gerenciamento {
     
     public void apoioMovimentacao(Gerente gerente, int senha) {
         Scanner teclado = new Scanner(System.in);
-        
         List<movimentacaoMilhao> transferenciasPendentes = new ArrayList<>();
         if(gerente.verificaSenha(senha)) {
            for (int i = 0; i < transferenciasPendentes.size(); i++) {
