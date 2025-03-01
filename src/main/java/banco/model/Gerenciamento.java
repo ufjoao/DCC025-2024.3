@@ -10,7 +10,7 @@ public class Gerenciamento {
     // Método para realizar uma transferência
     public void realizarTransferencia(Cliente cliente, Conta contaOrigem, Conta contaDestino, float valor, int senha) {
         ArrayList<Conta> contas = Persistence.carregarContas(); // Carrega as contas do JSON
-        List<TransferenciaMilhao> transferenciasPendentes = new ArrayList<>();
+        List<movimentacaoMilhao> transferenciasPendentes = new ArrayList<>();
         
         if (!cliente.verificaSenha(senha)) {
             System.out.println("Senha incorreta. Transferência não realizada.");
@@ -30,7 +30,8 @@ public class Gerenciamento {
             if (origem.getSaldo() >= valor) {
                if(valor >= 1000000)
                {
-                   //transferenciasPendentes.add(new TransferenciaMilhao(cliente, origem, destino, valor));
+                   transferenciasPendentes.add(new movimentacaoMilhao(cliente, origem, destino, valor));
+                   System.out.println("Solicitação realização de transferência acima de 1 milhão enviada para o gerente do banco\n");
                    return;
                }
                origem.saque(valor);
@@ -99,11 +100,11 @@ public class Gerenciamento {
     }
     
     public void apoioMovimentacao(Gerente gerente, int senha) {
-        /*Scanner teclado = new Scanner(System.in);
-        List<TransferenciaMilhao> transferenciasPendentes = new ArrayList<>();
+        Scanner teclado = new Scanner(System.in);
+        List<movimentacaoMilhao> transferenciasPendentes = new ArrayList<>();
         if(gerente.verificaSenha(senha)) {
            for (int i = 0; i < transferenciasPendentes.size(); i++) {
-              TransferenciaMilhao atual = transferenciasPendentes.get(i);
+              movimentacaoMilhao atual = transferenciasPendentes.get(i);
               System.out.println("O cliente " + atual.getNomeCliente() + " deseja transferir " + atual.getValor() + " reais da sua conta " + atual.getNumeroOrigem() + " para a conta " + atual.getNumeroDestino() + " do cliente " + atual.getNomeDestino()+ "\n");
               System.out.println("O cliente possui " + atual.getSaldoCliente() + " reais na respectiva conta\n");
               while (true) {
@@ -124,7 +125,7 @@ public class Gerenciamento {
                  }
               } 
            }
-        }*/
+        }
     }
 }
 
