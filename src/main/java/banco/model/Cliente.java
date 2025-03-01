@@ -34,6 +34,11 @@ public class Cliente extends Usuario
         Validador.validarSenhaDaConta(senha, contas.get(0).getNumeroDaConta());
         this.senha = senha;
     }
+    
+    @Override
+    public String getNome() {
+        return nome;
+    }
 
     public List<Conta> getContas() 
     {
