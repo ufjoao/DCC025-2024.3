@@ -2,6 +2,7 @@ package banco.model;
 
 import banco.persistence.Persistence;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Gerenciamento 
 {
@@ -22,7 +23,9 @@ public class Gerenciamento
     
     public void cadastrarUsuario()
     {
-        //os três valores abaixo serão inseridos pela tela, as informações abaixo são apenas exemplos
+        //os três valores abaixo receberão as entradas do teclado, caso possível
+        //os valores inseridos são apenas para testes.
+        //A ideia do método é fazer toda a leitura do teclado ou receber da tela quando for chamado, pensei em não passar nenhum parâmetro.
         String nome = null;
         String cpf = "12345678901";
         int senha = 14725836;
@@ -32,68 +35,75 @@ public class Gerenciamento
     
 
     // Método para realizar uma transferência
-    public void realizarTransferencia(Cliente cliente, Conta contaOrigem, Conta contaDestino, float valor, int senha) {
-        ArrayList<Conta> contas = Persistence.carregarContas(); // Carrega as contas do JSON
-
-        if (!cliente.verificaSenha(senha)) 
+    //
+    public void realizarTransferencia(int numeroDaContaOrigem, int numeroDaContaDestino, float valor, int senha) 
+    {
+        //depois vamos substituir todos os prints e entradas para pegar da tela
+        Scanner info = new Scanner(System.in);
+        
+        System.out.println("Digite numero da conta de origem:");
+        int origem = info.nextInt();
+        info.nextLine();
+        
+        System.out.println("Digite numero da conta de destino:");
+        int destino = info.nextInt();
+        info.nextLine();
+        
+        for(int i=0; i<clientes.size(); i++)
         {
-            System.out.println("Senha incorreta. Transferência não realizada.");
-            return;
-        }
-
-        // Buscar as instâncias corretas na lista carregada
-        Conta origem = encontrarConta(contas, contaOrigem.getNumeroDaConta());
-        Conta destino = encontrarConta(contas, contaDestino.getNumeroDaConta());
-
-        if (origem == null || destino == null) 
-        {
-            System.out.println("Conta de origem ou destino não encontrada.");
-            return;
-        }
-
-        if (cliente.verificaSenha(senha)) 
-        {
-            if (origem.getSaldo() >= valor) 
+            if(clientes.get(i).verificaNumeroDaConta(origem))
             {
-                origem.saque(valor);
-                origem.adicionarMovimentacao("Transferência enviada para " + destino.getDono().getNome() + " no valor de: " + valor);
-                destino.deposito(valor);
-                destino.adicionarMovimentacao("Transferência recebida de " + cliente.getNome() + " no valor de: " + valor);
+                for(int j=0; j<clientes.size(); j++)
+                {
+                    if(clientes.get(j).verificaNumeroDaConta(destino))
+                    {    
+                        System.out.println("Senha para a confirmacao da transferencia:");
+                        int senhaConfirmacao = info.nextInt();
+                        info.nextLine();
+                        
+                        //antes utilizávamos a verificação de senha do objeto clientes, presente na classe.
+                        //Porém, como o método será acessada por clientes e caixas, a verificação de senha interna do método
+                        //vai verificar a senha inserida a seguir com a senha informada na chamada do método.
+                        //antes da chamada, no menu, também teremos uma verificação.
+                        if(senha == senhaConfirmacao)
+                        {
+                            //se a senha for valida, entra e faz a transferencia
+                            clientes.get(i).realizarSaque(valor); //saca da conta de origem e deposita na conta de destino
+                            clientes.get(j).realizarDeposito(valor);
 
-                // Salva os clientes atualizados no JSON
-                Persistence.salvarContas(contas);
-                System.out.println("Transferência realizada com sucesso!");
-            } 
-            else 
-            {
-                System.out.println("Saldo insuficiente para realizar a transferência.");
+                            String movimentacao = "Transferencia \nValor: R$ " + valor;//string com os dados da transferencia, passada para o
+                            clientes.get(i).registraMovimentacao(movimentacao);        //setMovimentacoes, que armazena Strings para quando for necessario
+                            
+                            movimentacao = "Transferencia Recebida \nValor: R$ " + valor;
+                            clientes.get(j).registraMovimentacao(movimentacao);
+                        }
+                    }
+                }
             }
-        } 
-        else 
-        {
-            System.out.println("Senha incorreta. Transferência não realizada.");
         }
+        
     }
 
-    private Conta encontrarConta(ArrayList<Conta> contas, int numeroConta) 
+    private int encontrarConta(int numeroConta) 
     {
-        for (Conta conta : contas) 
+        for (int i=0; i<clientes.size(); i++) 
         {
-            if (conta.getNumeroDaConta() == numeroConta) 
+            if (clientes.get(i).verificaNumeroDaConta(numeroConta)) 
             {
-                return conta;
+                //retorna o indice que armazena o cliente que é dono daquela conta em especifico
+                return i;
             }
         }
-        return null; // Retorna null se a conta não for encontrada
+        return -1; //Retorna -1 caso a conta não seja encontrada
     }
 
     // Método para realizar um saque
-    public void realizarSaque(Caixa caixa, Cliente cliente, Conta conta, float valor, int senha) {
-        if (cliente.verificaSenha(senha)) 
-        {
-            if (conta.getSaldo() >= valor) 
+    public void realizarSaque(int i, float valor, int senha, int numeroDaConta) 
+    {
+
+            if (clientes.get(i).retornaSaldo(numeroDaConta) >= valor) 
             {
-                conta.saque(valor);
+                clientes.get(i).realizarSaque(valor);
                 System.out.println("Saque realizado com sucesso!");
                 //clientes.get(i).registraMovimentacao("Saque no valor de R$" + valor);
             } 
@@ -101,17 +111,13 @@ public class Gerenciamento
             {
                 System.out.println("Saldo insuficiente.");
             }
-        } 
-        else 
-        {
-            System.out.println("Senha incorreta. Saque não autorizado.");
-        }
     }
 
     // Método para realizar um depósito
-    public void realizarDeposito(Caixa caixa, Conta conta, float valor) 
+    public void realizarDeposito(int i, float valor) 
     {
-        conta.deposito(valor);
+        clientes.get(i).realizarDeposito(valor);
+        //seria interessante fazer mais uma verificação de senha?
         System.out.println("Depósito realizado com sucesso!");
         //clientes.get(i).registraMovimentacao("Depósito no valor de R$" + valor);
     }

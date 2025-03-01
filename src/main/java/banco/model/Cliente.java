@@ -73,6 +73,17 @@ public class Cliente extends Usuario
     {
         contas.get(contas.indexOf(this)).consultaSaldo();
     }
+    
+    public float retornaSaldo(int numeroDaConta)
+    {
+        for(int i=0; i<contas.size(); i++)
+        {
+            if(verificaNumeroDaConta(numeroDaConta))
+                return contas.get(i).getSaldo();
+        }
+        System.out.println("Conta não encontrada.");
+        return -1.f;
+    }
 
     public void gerarExtrato() 
     {
