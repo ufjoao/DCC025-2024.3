@@ -179,7 +179,40 @@ public class Gerenciamento
            }
         }
     }
+    
+    public void apoioSaque(Gerente gerente, int senha) {
+        Scanner teclado = new Scanner(System.in);
+        List<saqueMilhao> saquesPendentes = new ArrayList<>();
+        if(gerente.verificaSenha(senha)) {
+           for (int i = 0; i < saquesPendentes.size(); i++) {
+              saqueMilhao atual = saquesPendentes.get(i);
+              System.out.println("O cliente " + atual.getNomeCliente() + " deseja sacar " + atual.getValor() + " reais da sua conta " + atual.getNumeroConta() + "\n");
+              System.out.println("O cliente possui " + atual.getSaldoCliente() + " reais na respectiva conta\n");
+              while (true) {
+                 System.out.println("Você deseja permitir o saque? (sim/não)");
+                 String resposta = teclado.nextLine().trim().toLowerCase();
+
+                 if(resposta.equals("sim")) {
+                     atual.executarSaque();
+                     System.out.println("Permissão Concedida");
+                     break;
+                 } 
+                 else if(resposta.equals("não")) {
+                     System.out.println("Permissão Negada");
+                     break;
+                 } 
+                 else  {
+                     System.out.println("Resposta inválida. Por favor, responda com 'sim' ou 'não'.");
+                 }
+              }
+           }
+        }
+    }
 }
+    
+    
+    
+
 
 
 
