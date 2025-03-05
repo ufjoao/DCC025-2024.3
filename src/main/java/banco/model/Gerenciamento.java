@@ -15,6 +15,8 @@ public class Gerenciamento
     private ArrayList<Caixa> caixas = new ArrayList<>();
     private ArrayList<Gerente> gerentes = new ArrayList<>();
 
+    private static Scanner scanner = new Scanner(System.in);
+    
     public Gerenciamento()
     {
         clientes = new ArrayList<>();  
@@ -22,29 +24,64 @@ public class Gerenciamento
         gerentes = new ArrayList<>();
     }
     
-    public void cadastrarUsuario()
+//    public void cadastrarUsuario()
+//    {
+//        //os três valores abaixo receberão as entradas do teclado, caso possível
+//        //os valores inseridos são apenas para testes.
+//        //A ideia do método é fazer toda a leitura do teclado ou receber da tela quando for chamado, pensei em não passar nenhum parâmetro.
+//        String nome = null;
+//        String cpf = "12345678901";
+//        int senha = 14725836;
+//        
+//        clientes.add(new Cliente(nome, cpf, senha));
+//    }
+    
+    private void cadastrarUsuario() 
     {
-        //os três valores abaixo receberão as entradas do teclado, caso possível
-        //os valores inseridos são apenas para testes.
-        //A ideia do método é fazer toda a leitura do teclado ou receber da tela quando for chamado, pensei em não passar nenhum parâmetro.
-        String nome = null;
-        String cpf = "12345678901";
-        int senha = 14725836;
+        System.out.println("Escolha o tipo de usuário a cadastrar:");
+        System.out.println("1 - Cliente");
+        System.out.println("2 - Caixa");
+        System.out.println("3 - Gerente");
+        System.out.print("Escolha uma opção: ");
         
-        clientes.add(new Cliente(nome, cpf, senha));
+        int tipoUsuario = scanner.nextInt();
+        scanner.nextLine();
+        
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+        System.out.print("CPF: ");
+        String cpf = scanner.nextLine();
+        System.out.print("Senha: ");
+        int senha = scanner.nextInt();
+        
+        switch (tipoUsuario) 
+        {
+            case 1:
+                clientes.add(new Cliente(nome, cpf, senha));
+                System.out.println("Cliente cadastrado com sucesso!");
+                break;
+            case 2:
+                caixas.add(new Caixa(nome, cpf, senha));
+                System.out.println("Caixa cadastrado com sucesso!");
+                break;
+            case 3:
+                gerentes.add(new Gerente(nome, cpf, senha));
+                System.out.println("Gerente cadastrado com sucesso!");
+                break;
+            default:
+                System.out.println("Opção inválida.");
+        }
     }
     
 
     // Método para realizar uma transferência
     //
-    public void realizarTransferencia(int numeroDaContaOrigem, int numeroDaContaDestino, float valor, int senha) 
+    public void realizarTransferencia(int numeroDaContaOrigem, float valor, int senha) 
     {
         //depois vamos substituir todos os prints e entradas para pegar da tela
         Scanner info = new Scanner(System.in);
         
-        System.out.println("Digite numero da conta de origem:");
-        int origem = info.nextInt();
-        info.nextLine();
+        int origem = numeroDaContaOrigem;
         
         System.out.println("Digite numero da conta de destino:");
         int destino = info.nextInt();
@@ -99,12 +136,12 @@ public class Gerenciamento
     }
 
     // Método para realizar um saque
-    public void realizarSaque(int i, float valor, int senha, int numeroDaConta) 
+    public void realizarSaque(Cliente cliente, float valor, int senha, int numeroDaConta) 
     {
 
-            if (clientes.get(i).retornaSaldo(numeroDaConta) >= valor) 
+            if (cliente.retornaSaldo(numeroDaConta) >= valor) 
             {
-                clientes.get(i).realizarSaque(valor);
+                cliente.realizarSaque(valor);
                 System.out.println("Saque realizado com sucesso!");
                 //clientes.get(i).registraMovimentacao("Saque no valor de R$" + valor);
             } 
@@ -115,9 +152,9 @@ public class Gerenciamento
     }
 
     // Método para realizar um depósito
-    public void realizarDeposito(int i, float valor) 
+    public void realizarDeposito(Cliente cliente, float valor) 
     {
-        clientes.get(i).realizarDeposito(valor);
+        cliente.realizarDeposito(valor);
         //seria interessante fazer mais uma verificação de senha?
         System.out.println("Depósito realizado com sucesso!");
         //clientes.get(i).registraMovimentacao("Depósito no valor de R$" + valor);
@@ -215,6 +252,207 @@ public class Gerenciamento
            }
         }
     }
+
+    //fiz um único método, pois os clientes e os caixas têm acesso às exatas mesmas funções
+    private void acessarClienteCaixa() 
+    {
+        System.out.print("Digite seu CPF: ");
+        String cpf = scanner.nextLine();
+        System.out.print("Digite sua senha: ");
+        int senha = scanner.nextInt();
+        
+        Cliente cliente = encontrarCliente(cpf, senha);
+        
+        if (cliente != null) 
+        {
+            boolean continuarCliente = true;
+            
+            while (continuarCliente) 
+            {
+                System.out.println("\n==== Menu Cliente ====");
+                System.out.println("1 - Realizar Transferência");
+                System.out.println("2 - Realizar Saque");
+                System.out.println("3 - Realizar Depósito");
+                System.out.println("4 - Sair");
+                System.out.print("Escolha uma opção: ");
+                
+                int opcao = scanner.nextInt();
+                switch(opcao) 
+                {
+                    case 1:
+                        System.out.print("Digite o número da conta de origem: ");
+                        int numeroDaContaOrigem = scanner.nextInt();
+                        scanner.nextLine();
+                        
+                        System.out.print("Digite valor de transferência: ");
+                        Float valor = scanner.nextFloat();
+                        scanner.nextLine();
+                        
+                        realizarTransferencia(numeroDaContaOrigem, valor, senha);
+                        break;
+                    case 2:
+                        System.out.print("Digite o número da conta: ");
+                        int numeroDaConta = scanner.nextInt();
+                        scanner.nextLine();
+                        
+                        System.out.print("Digite valor do saque: ");
+                        Float valorSaque = scanner.nextFloat();
+                        scanner.nextLine();
+                        
+                        realizarSaque(cliente, valorSaque, senha, numeroDaConta );
+                        break;
+                    case 3:
+                        System.out.print("Digite valor do depósito: ");
+                        Float valorDeposito = scanner.nextFloat();
+                        scanner.nextLine();
+                        realizarDeposito(cliente, valorDeposito);
+                        break;
+                    case 4:
+                        continuarCliente = false;
+                        System.out.println("Saindo...");
+                        break;
+                    default:
+                        System.out.println("Opção inválida.");
+                }
+            }
+        } 
+        else 
+        {
+            System.out.println("Cliente não encontrado ou dados incorretos.");
+        }
+    }
+    
+    private void acessarGerente() 
+    {
+        System.out.print("Digite seu CPF: ");
+        String cpf = scanner.nextLine();
+        System.out.print("Digite sua senha: ");
+        int senha = scanner.nextInt();
+        
+        Gerente gerente = encontrarGerente(cpf, senha);
+        
+        if (gerente != null) 
+        {
+            boolean continuarGerente = true;
+            
+            while (continuarGerente) 
+            {
+                System.out.println("\n==== Menu Gerente ====");
+                System.out.println("1 - Aprovar Crédito");
+                System.out.println("2 - Cadastrar Investimento");
+                System.out.println("3 - Apoio Movimentação");
+                System.out.println("4 - Apoio Saque");
+                System.out.println("5 - Sair");
+                System.out.print("Escolha uma opção: ");
+                
+                int opcao = scanner.nextInt();
+                switch (opcao) 
+                {
+                    case 1:
+                        aprovarCredito(gerente, cliente, valor, senha);
+                        break;
+                    case 2:
+                        cadastrarInvestimento();
+                        break;
+                    case 3:
+                        apoioMovimentacao();
+                        break;
+                    case 4:
+                        apoioSaque();
+                        break;
+                    case 5:
+                        continuarGerente = false;
+                        System.out.println("Saindo...");
+                        break;
+                    default:
+                        System.out.println("Opção inválida.");
+                }
+            }
+        } 
+        else 
+        {
+            System.out.println("Gerente não encontrado ou dados incorretos.");
+        }
+    }
+    
+    // Métodos de busca para encontrar usuário pelo CPF e senha
+    private Cliente encontrarCliente(String cpf, int senha) 
+    {
+        for (Cliente cliente : clientes) 
+        {
+            if (cliente.getCpf().equals(cpf) && cliente.verificaSenha(senha)) 
+            {
+                return cliente;
+            }
+        }
+        return null;
+    }
+    
+    private Caixa encontrarCaixa(String cpf, int senha) 
+    {
+        for (Caixa caixa : caixas) 
+        {
+            if (caixa.getCpf().equals(cpf) && caixa.verificaSenha(senha)) 
+            {
+                return caixa;
+            }
+        }
+        return null;
+    }
+
+    private Gerente encontrarGerente(String cpf, int senha) 
+    {
+        for (Gerente gerente : gerentes) 
+        {
+            if (gerente.getCpf().equals(cpf) && gerente.verificaSenha(senha)) 
+            {
+                return gerente;
+            }
+        }
+        return null;
+    }
+    public void menu() 
+    {
+        boolean continuar = true;
+        
+        while (continuar) 
+        {
+            System.out.println("=================================");
+            System.out.println("Bem-vindo ao Sistema Bancário!");
+            System.out.println("1 - Cadastrar novo usuário");
+            System.out.println("2 - Acessar como cliente");
+            System.out.println("3 - Acessar como caixa");
+            System.out.println("4 - Acessar como gerente");
+            System.out.println("5 - Sair");
+            System.out.print("Escolha uma opção: ");
+            
+            int opcao = scanner.nextInt();
+            scanner.nextLine();  // Consumir a nova linha que fica após a escolha
+            
+            switch (opcao) 
+            {
+                case 1:
+                    cadastrarUsuario();
+                    break;
+                case 2:
+                    acessarClienteCaixa();
+                    break;
+                case 3:
+                    acessarClienteCaixa();
+                    break;
+                case 4:
+                    acessarGerente();
+                    break;
+                case 5:
+                    continuar = false;
+                    System.out.println("Saindo do sistema...");
+                    break;
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+    }
+
 }
     
     
