@@ -2,6 +2,7 @@ package banco.model;
 
 import banco.persistence.Persistence;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Gerenciamento 

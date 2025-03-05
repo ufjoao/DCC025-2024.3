@@ -27,6 +27,9 @@ public class Banco {
         Persistence.addConta(conta1);
         Persistence.salvarContas(Persistence.carregarContas());
         Gerenciamento gerenciador = new Gerenciamento();
-        gerenciador.realizarTransferencia(c1, conta1, conta2, 150.50f, 340725);
+        
+//        o teste deverá ser feito dentro da gerenciamento, já que realizarTransferencia agora recebe
+//        o número das contas, o valor e uma senha
+//        gerenciador.realizarTransferencia(c1, conta1, conta2, 150.50f, 340725);
     }
 }
