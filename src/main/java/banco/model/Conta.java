@@ -5,6 +5,7 @@
 package banco.model;
 
 import banco.exception.Validador;
+import banco.persistence.Persistence;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -16,105 +17,83 @@ import java.util.ArrayList;
  */
 public class Conta {
 
-     @Expose
+    @Expose
     private int numeroDaConta;
-    private String agencia;
-     @Expose
+    @Expose
     private float saldo;
-     @Expose
+    @Expose
     private ArrayList<String> movimentacoes;
     @SerializedName("cliente")
-    private Cliente dono;
+    private int clienteId;
     private static ArrayList<Conta> contasRegistradas = new ArrayList<>();
 
-    public Conta() 
-    {
+    public Conta() {
         this.movimentacoes = new ArrayList<>();
     }
 
-    public Conta(int numero, Cliente dono) 
-    {
+    public Conta(int numero, int dono) {
         Validador.validarNumeroConta(numero);
         this.numeroDaConta = numero;
-        this.agencia = "0001";
         this.saldo = 0;
         this.movimentacoes = new ArrayList<>();
-        this.dono = dono;
-        addContaRegistro();
+        this.clienteId = dono;
     }
 
-    private void addContaRegistro() 
-    {
-        dono.addContaRegistro(this);
+    public Cliente getDono() {
+        return Persistence.buscarClientePorId(clienteId);
     }
     
-    public Cliente getDono()
-    {
-        return dono;
-    }
+    public int getClienteId() {
+    return clienteId;
+}
 
+public void setClienteId(int clienteId) {
+    this.clienteId = clienteId;
+}
 
-    public String getAgencia() 
-    {
-        return agencia;
-    }
-
-    public float getSaldo() 
-    {
+    public float getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(float saldo) 
-    {
+    public void setSaldo(float saldo) {
         this.saldo = saldo;
     }
 
-    public int getNumeroDaConta() 
-    {
+    public int getNumeroDaConta() {
         return numeroDaConta;
     }
 
-    public ArrayList<String> getMovimentacoes() 
-    {
+    public ArrayList<String> getMovimentacoes() {
         return movimentacoes;
     }
 
-     public void adicionarMovimentacao(String movimentacao) 
-     {
-        if (movimentacao != null && !movimentacao.isEmpty()) 
-        {
+    public void adicionarMovimentacao(String movimentacao) {
+        if (movimentacao != null && !movimentacao.isEmpty()) {
             this.movimentacoes.add(movimentacao);
-        } 
-        else 
-        {
+        } else {
             throw new IllegalArgumentException("Movimentação não pode ser nula ou vazia.");
         }
     }
-     
-     public void setMovimentacoes(ArrayList<String> movimentacoesTotais)
-     {
-         movimentacoes = movimentacoesTotais;
-     }
 
-    boolean verificaNumeroDaConta(int numeroDaConta) 
-    {
+    public void setMovimentacoes(ArrayList<String> movimentacoesTotais) {
+        movimentacoes = movimentacoesTotais;
+    }
+
+    boolean verificaNumeroDaConta(int numeroDaConta) {
         return this.numeroDaConta == numeroDaConta;
     }
 
-    public void deposito(float valor) 
-    {
+    public void deposito(float valor) {
         Validador.validarDeposito(valor);
         saldo += valor;
     }
 
-    void saque(float valor) 
-    {
+    void saque(float valor) {
         Validador.validarSaque(valor, saldo);
         saldo -= valor;
     }
 
-    public void transferir(Conta destino, float valor, int senha) 
-    {
+    public void transferir(Conta destino, float valor, int senha) {
         Validador.validarSenha(senha);
         Validador.validarTransferencia(valor, destino, contasRegistradas);
         Validador.validarSaque(valor, saldo);
@@ -124,27 +103,21 @@ public class Conta {
         movimentacoes.add("Transferência de R$ " + valor + " para conta " + destino.getNumeroDaConta());
     }
 
-    void consultaSaldo() 
-    {
+    void consultaSaldo() {
         System.out.println("Saldo da Conta\n");
         System.out.println("Saldo: R$" + saldo);
     }
 
-    void gerarExtrato() 
-    {
+    void gerarExtrato() {
         System.out.println("Extrato da Conta\n");
 
-        if (movimentacoes != null) 
-        {
+        if (movimentacoes != null) {
             System.out.println("Ultimas movimentacoes da conta:");
 
-            for (int i = 0; i < movimentacoes.size(); i++) 
-            {
+            for (int i = 0; i < movimentacoes.size(); i++) {
                 System.out.println(movimentacoes.get(i));
             }
-        } 
-        else 
-        {
+        } else {
             System.out.println("Conta sem movimentacoes");
         }
     }

@@ -4,17 +4,13 @@
  */
 package banco.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  *
  * @author rodri
  */
 public class Caixa extends Usuario {
 
-    public Caixa(@JsonProperty("nome") String nome,
-            @JsonProperty("cpf") String cpf,
-            @JsonProperty("senha") int senha) {
+    public Caixa (String nome, String cpf, int senha) {
         super(nome, cpf, senha);
     }
 

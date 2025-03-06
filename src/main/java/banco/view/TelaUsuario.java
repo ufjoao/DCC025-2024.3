@@ -25,22 +25,27 @@ public class TelaUsuario extends JFrame {
         // Painel de ações (botões)
         JPanel painelAcoes = new JPanel();
         painelAcoes.setLayout(new GridLayout(0, 2, 10, 10));  // Layout dinâmico com espaçamento
-
         // Adiciona os botões conforme o tipo de usuário
-        if (tipoUsuario.equals("Cliente")) {
-            adicionarBotao(painelAcoes, "Consultar Saldo");
-            adicionarBotao(painelAcoes, "Extrato");
-            adicionarBotao(painelAcoes, "Investimentos");
-            adicionarBotao(painelAcoes, "Empréstimos");
-            adicionarBotao(painelAcoes, "Financiamentos");
-        } else if (tipoUsuario.equals("Caixa")) {
-            adicionarBotao(painelAcoes, "Depósitos");
-            adicionarBotao(painelAcoes, "Saques");
-            adicionarBotao(painelAcoes, "Transferências");
-        } else if (tipoUsuario.equals("Gerente")) {
-            adicionarBotao(painelAcoes, "Gerenciar Usuários");
-            adicionarBotao(painelAcoes, "Aprovar Crédito");
-            adicionarBotao(painelAcoes, "Relatórios Financeiros");
+        switch (tipoUsuario) {
+            case "Cliente" -> {
+                adicionarBotao(painelAcoes, "Consultar Saldo");
+                adicionarBotao(painelAcoes, "Extrato");
+                adicionarBotao(painelAcoes, "Investimentos");
+                adicionarBotao(painelAcoes, "Empréstimos");
+                adicionarBotao(painelAcoes, "Financiamentos");
+            }
+            case "Caixa" -> {
+                adicionarBotao(painelAcoes, "Depósitos");
+                adicionarBotao(painelAcoes, "Saques");
+                adicionarBotao(painelAcoes, "Transferências");
+            }
+            case "Gerente" -> {
+                adicionarBotao(painelAcoes, "Gerenciar Usuários");
+                adicionarBotao(painelAcoes, "Aprovar Crédito");
+                adicionarBotao(painelAcoes, "Relatórios Financeiros");
+            }
+            default -> {
+            }
         }
 
         // Botão de sair (comum a todos)
@@ -59,7 +64,6 @@ public class TelaUsuario extends JFrame {
         
         botao.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "Ação: " + texto);
-            // Aqui você pode chamar outras telas, dependendo da ação
         });
     }
 }
