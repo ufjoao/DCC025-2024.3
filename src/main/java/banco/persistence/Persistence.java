@@ -217,6 +217,46 @@ public class Persistence {
         return null; // Retorna null se não encontrar o cliente
     }
 
+    public static Caixa buscarCaixaPorId(int id) {
+        Gson gson = new Gson();
+
+        try (FileReader reader = new FileReader("clientes.json")) {
+            Type listType = new TypeToken<List<Caixa>>() {
+            }.getType();
+            List<Caixa> caixas = gson.fromJson(reader, listType);
+
+            for (Caixa caixa : caixas) {
+                if (caixa.getId() == id) {
+                    return caixa;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null; // Retorna null se não encontrar o cliente
+    }
+
+    public static Gerente buscarGerentePorId(int id) {
+        Gson gson = new Gson();
+
+        try (FileReader reader = new FileReader("clientes.json")) {
+            Type listType = new TypeToken<List<Gerente>>() {
+            }.getType();
+            List<Gerente> gerentes = gson.fromJson(reader, listType);
+
+            for (Gerente gerente : gerentes) {
+                if (gerente.getId() == id) {
+                    return gerente;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null; // Retorna null se não encontrar o cliente
+    }
+
     public static Conta buscarContaPorNumero(int numeroConta) {
         List<Cliente> clientes = carregarClientes();
         for (Cliente cliente : clientes) {

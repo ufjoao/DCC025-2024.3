@@ -56,7 +56,7 @@ public class TelaLogin extends JFrame {
         // Verifica se é Cliente
         for (Cliente c : clientes) {
             if (c.getCpf().equals(cpf) && String.valueOf(c.getSenha()).equals(senhaDigitada)) {
-                abrirTelaUsuario("Cliente");
+                abrirTelaSelecaoConta(c, "Cliente");
                 return;
             }
         }
@@ -64,7 +64,7 @@ public class TelaLogin extends JFrame {
         // Verifica se é Caixa
         for (Caixa cx : caixas) {
             if (cx.getCpf().equals(cpf) && String.valueOf(cx.getSenha()).equals(senhaDigitada)) {
-                abrirTelaUsuario("Caixa");
+                abrirTelaUsuario(cx.getId(), "Caixa");
                 return;
             }
         }
@@ -72,7 +72,7 @@ public class TelaLogin extends JFrame {
         // Verifica se é Gerente
         for (Gerente g : gerentes) {
             if (g.getCpf().equals(cpf) && String.valueOf(g.getSenha()).equals(senhaDigitada)) {
-                abrirTelaUsuario("Gerente");
+                abrirTelaUsuario(g.getId(), "Gerente");
                 return;
             }
         }
@@ -86,9 +86,15 @@ public class TelaLogin extends JFrame {
         this.dispose();
     }
 
-    private void abrirTelaUsuario(String tipoUsuario) {
+    private void abrirTelaUsuario(int id, String tipoUsuario) {
         JOptionPane.showMessageDialog(this, "Login bem-sucedido! Tipo: " + tipoUsuario);
         this.dispose(); // Fecha a tela de login
-        new TelaUsuario(tipoUsuario); // Abre a tela do usuário correspondente
+        new TelaUsuario(tipoUsuario, id); // Abre a tela do usuário correspondente
+    }
+    
+        private void abrirTelaSelecaoConta(Cliente cliente, String tipoUsuario) {
+        JOptionPane.showMessageDialog(this, "Login bem-sucedido! Tipo: " + tipoUsuario);
+        this.dispose(); // Fecha a tela de login
+        new TelaSelecaoConta(cliente); // Abre a tela do usuário correspondente
     }
 }

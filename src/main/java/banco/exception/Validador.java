@@ -123,11 +123,6 @@ public class Validador {
         if (temSequencia(senhaStr)) {
             throw new ValidacaoException("A senha não pode conter números em sequência.");
         }
-
-        // Verificar se a senha tem números repetidos (ex: 111111)
-        if (temCaractereRepetido(senhaStr)) {
-            throw new ValidacaoException("A senha não pode conter números repetidos.");
-        }
     }
 
 // Validação do número da conta (como inteiro)
@@ -143,11 +138,6 @@ public class Validador {
         // Verificar se a senha tem números em sequência (ex: 123456)
         if (temSequencia(senhaStr)) {
             throw new ValidacaoException("O número da conta não pode conter números em sequência.");
-        }
-
-        // Verificar se a senha tem números repetidos (ex: 111111)
-        if (temCaractereRepetido(senhaStr)) {
-            throw new ValidacaoException("O número da conta não pode conter números repetidos.");
         }
     }
 

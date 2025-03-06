@@ -94,7 +94,7 @@ public void setClienteId(int clienteId) {
     }
 
     public void transferir(Conta destino, float valor, int senha) {
-        Validador.validarSenha(senha);
+        Validador.validarSenhaDaConta(senha, numeroDaConta);
         Validador.validarTransferencia(valor, destino, contasRegistradas);
         Validador.validarSaque(valor, saldo);
         this.saque(valor);
