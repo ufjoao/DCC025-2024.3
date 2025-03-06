@@ -322,58 +322,58 @@ public class Gerenciamento
         }
     }
     
-    private void acessarGerente() 
-    {
-        System.out.print("Digite seu CPF: ");
-        String cpf = scanner.nextLine();
-        System.out.print("Digite sua senha: ");
-        int senha = scanner.nextInt();
-        
-        Gerente gerente = encontrarGerente(cpf, senha);
-        
-        if (gerente != null) 
-        {
-            boolean continuarGerente = true;
-            
-            while (continuarGerente) 
-            {
-                System.out.println("\n==== Menu Gerente ====");
-                System.out.println("1 - Aprovar Crédito");
-                System.out.println("2 - Cadastrar Investimento");
-                System.out.println("3 - Apoio Movimentação");
-                System.out.println("4 - Apoio Saque");
-                System.out.println("5 - Sair");
-                System.out.print("Escolha uma opção: ");
-                
-                int opcao = scanner.nextInt();
-                switch (opcao) 
-                {
-                    case 1:
-                        aprovarCredito(gerente, cliente, valor, senha);
-                        break;
-                    case 2:
-                        cadastrarInvestimento();
-                        break;
-                    case 3:
-                        apoioMovimentacao();
-                        break;
-                    case 4:
-                        apoioSaque();
-                        break;
-                    case 5:
-                        continuarGerente = false;
-                        System.out.println("Saindo...");
-                        break;
-                    default:
-                        System.out.println("Opção inválida.");
-                }
-            }
-        } 
-        else 
-        {
-            System.out.println("Gerente não encontrado ou dados incorretos.");
-        }
-    }
+//    private void acessarGerente() 
+//    {
+//        System.out.print("Digite seu CPF: ");
+//        String cpf = scanner.nextLine();
+//        System.out.print("Digite sua senha: ");
+//        int senha = scanner.nextInt();
+//        
+//        Gerente gerente = encontrarGerente(cpf, senha);
+//        
+//        if (gerente != null) 
+//        {
+//            boolean continuarGerente = true;
+//            
+//            while (continuarGerente) 
+//            {
+//                System.out.println("\n==== Menu Gerente ====");
+//                System.out.println("1 - Aprovar Crédito");
+//                System.out.println("2 - Cadastrar Investimento");
+//                System.out.println("3 - Apoio Movimentação");
+//                System.out.println("4 - Apoio Saque");
+//                System.out.println("5 - Sair");
+//                System.out.print("Escolha uma opção: ");
+//                
+//                int opcao = scanner.nextInt();
+//                switch (opcao) 
+//                {
+//                    case 1:
+//                        aprovarCredito(gerente, cliente, valor, senha);
+//                        break;
+//                    case 2:
+//                        cadastrarInvestimento();
+//                        break;
+//                    case 3:
+//                        apoioMovimentacao();
+//                        break;
+//                    case 4:
+//                        apoioSaque();
+//                        break;
+//                    case 5:
+//                        continuarGerente = false;
+//                        System.out.println("Saindo...");
+//                        break;
+//                    default:
+//                        System.out.println("Opção inválida.");
+//                }
+//            }
+//        } 
+//        else 
+//        {
+//            System.out.println("Gerente não encontrado ou dados incorretos.");
+//        }
+//    }
     
     // Métodos de busca para encontrar usuário pelo CPF e senha
     private Cliente encontrarCliente(String cpf, int senha) 
@@ -411,47 +411,47 @@ public class Gerenciamento
         }
         return null;
     }
-    public void menu() 
-    {
-        boolean continuar = true;
-        
-        while (continuar) 
-        {
-            System.out.println("=================================");
-            System.out.println("Bem-vindo ao Sistema Bancário!");
-            System.out.println("1 - Cadastrar novo usuário");
-            System.out.println("2 - Acessar como cliente");
-            System.out.println("3 - Acessar como caixa");
-            System.out.println("4 - Acessar como gerente");
-            System.out.println("5 - Sair");
-            System.out.print("Escolha uma opção: ");
-            
-            int opcao = scanner.nextInt();
-            scanner.nextLine();  // Consumir a nova linha que fica após a escolha
-            
-            switch (opcao) 
-            {
-                case 1:
-                    cadastrarUsuario();
-                    break;
-                case 2:
-                    acessarClienteCaixa();
-                    break;
-                case 3:
-                    acessarClienteCaixa();
-                    break;
-                case 4:
-                    acessarGerente();
-                    break;
-                case 5:
-                    continuar = false;
-                    System.out.println("Saindo do sistema...");
-                    break;
-                default:
-                    System.out.println("Opção inválida. Tente novamente.");
-            }
-        }
-    }
+//    public void menu() 
+//    {
+//        boolean continuar = true;
+//        
+//        while (continuar) 
+//        {
+//            System.out.println("=================================");
+//            System.out.println("Bem-vindo ao Sistema Bancário!");
+//            System.out.println("1 - Cadastrar novo usuário");
+//            System.out.println("2 - Acessar como cliente");
+//            System.out.println("3 - Acessar como caixa");
+//            System.out.println("4 - Acessar como gerente");
+//            System.out.println("5 - Sair");
+//            System.out.print("Escolha uma opção: ");
+//            
+//            int opcao = scanner.nextInt();
+//            scanner.nextLine();  // Consumir a nova linha que fica após a escolha
+//            
+//            switch (opcao) 
+//            {
+//                case 1:
+//                    cadastrarUsuario();
+//                    break;
+//                case 2:
+//                    acessarClienteCaixa();
+//                    break;
+//                case 3:
+//                    acessarClienteCaixa();
+//                    break;
+//                case 4:
+//                    acessarGerente();
+//                    break;
+//                case 5:
+//                    continuar = false;
+//                    System.out.println("Saindo do sistema...");
+//                    break;
+//                default:
+//                    System.out.println("Opção inválida. Tente novamente.");
+//            }
+//        }
+//    }
 
 }
     
