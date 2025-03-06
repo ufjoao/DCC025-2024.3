@@ -1,5 +1,6 @@
 package banco.view;
 
+import banco.exception.Validador;
 import banco.model.Cliente;
 import banco.persistence.Persistence;
 import javax.swing.*;
@@ -41,8 +42,6 @@ public class TelaCadastroCliente extends JFrame {
         panel.add(new JLabel("Senha:"));
         panel.add(campoSenha);
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        // Campos para cadastrar a conta
         panel.add(new JLabel("Número da Conta:"));
         panel.add(campoNumeroConta);
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -54,8 +53,14 @@ public class TelaCadastroCliente extends JFrame {
     }
 
     private void cadastrarCliente(ActionEvent e) {
+        String cpf = " ";
+        if(Validador.cpfValido(campoCpf.getText())){
+            cpf = campoCpf.getText(); 
+        }                       
+        else
+            JOptionPane.showMessageDialog(this, "CPF inválido!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
         String nome = campoNome.getText();
-        String cpf = campoCpf.getText();
+        
         String senha = new String(campoSenha.getPassword());
         int numeroDaConta = Integer.parseInt(campoNumeroConta.getText());
 
