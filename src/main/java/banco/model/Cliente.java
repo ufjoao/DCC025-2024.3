@@ -14,6 +14,7 @@ public class Cliente extends Usuario
     private String cpf;
     private int senha;
     private ArrayList<Conta> contas = new ArrayList<>(); // Um cliente pode ter várias contas
+    private float limiteCredito = 0f;
 
     @JsonCreator
     public Cliente(@JsonProperty("nome") String nome,
@@ -45,6 +46,18 @@ public class Cliente extends Usuario
         return contas;
     }
 
+    public Conta retornaConta(int numeroDaConta)
+    {
+        for(int i=0; i<contas.size(); i++)
+        {
+            if(verificaNumeroDaConta(numeroDaConta))
+                return contas.get(i);
+        }
+        
+        System.out.println("Conta não encontrada");
+        return null;
+    }
+    
     public void adicionarConta(Conta conta) 
     {
         if (conta == null) 
@@ -103,5 +116,15 @@ public class Cliente extends Usuario
     public void registraMovimentacao(String movimentacao) 
     {
         contas.get(contas.indexOf(this)).adicionarMovimentacao(movimentacao);
+    }
+    
+    public float getLimiteCredito() 
+    {
+        return limiteCredito;
+    }
+    
+    public void adicionarLimiteCredito(float valor) 
+    {
+        this.limiteCredito += valor;
     }
 }

@@ -14,7 +14,10 @@ public class Gerenciamento
     private ArrayList<Cliente> clientes = new ArrayList<>();
     private ArrayList<Caixa> caixas = new ArrayList<>();
     private ArrayList<Gerente> gerentes = new ArrayList<>();
-
+    private ArrayList<Investimento> investimentos = new ArrayList<>();
+    private List<movimentacaoMilhao> transferenciasPendentes = new ArrayList<>();
+    private List<saqueMilhao> saquesPendentes = new ArrayList<>();
+    
     private static Scanner scanner = new Scanner(System.in);
     
     public Gerenciamento()
@@ -22,19 +25,10 @@ public class Gerenciamento
         clientes = new ArrayList<>();  
         caixas = new ArrayList<>();
         gerentes = new ArrayList<>();
+        investimentos = new ArrayList<>();
+        transferenciasPendentes = new ArrayList();
+        saquesPendentes = new ArrayList<>();
     }
-    
-//    public void cadastrarUsuario()
-//    {
-//        //os três valores abaixo receberão as entradas do teclado, caso possível
-//        //os valores inseridos são apenas para testes.
-//        //A ideia do método é fazer toda a leitura do teclado ou receber da tela quando for chamado, pensei em não passar nenhum parâmetro.
-//        String nome = null;
-//        String cpf = "12345678901";
-//        int senha = 14725836;
-//        
-//        clientes.add(new Cliente(nome, cpf, senha));
-//    }
     
     private void cadastrarUsuario() 
     {
@@ -165,13 +159,23 @@ public class Gerenciamento
         clientes.get(i).gerarExtrato();
     }
 
-    // Método para o gerente aprovar crédito
-    public void aprovarCredito(Gerente gerente, Cliente cliente, float valor, int senha) 
+        // Método para aprovar crédito para um cliente
+    public void aprovarCredito(Gerente gerente, Cliente cliente, float valor, int senha, int numeroDaConta) 
     {
+        // Verificar se a senha do gerente está correta
         if (gerente.verificaSenha(senha)) 
         {
-            // Aqui a lógica de aprovação pode envolver verificação de histórico de crédito
-            System.out.println("Crédito aprovado para o cliente " + cliente.getNome());
+            if (cliente.retornaSaldo(numeroDaConta) >= valor) 
+            {
+                System.out.println("Crédito aprovado para o cliente " + cliente.getNome() + " no valor de R$ " + valor);
+                // Aumenta o limite de crédito
+                cliente.adicionarLimiteCredito(valor);
+                System.out.println("Limite de crédito do cliente " + cliente.getNome() + " foi aumentado para R$ " + cliente.getLimiteCredito());
+            } 
+            else 
+            {
+                System.out.println("Saldo insuficiente para aprovar o crédito.");
+            }
         } 
         else 
         {
@@ -179,13 +183,16 @@ public class Gerenciamento
         }
     }
 
-    // Método para cadastrar uma nova opção de investimento (pode ser realizado pelo gerente)
+        // Método para cadastrar um novo investimento
     public void cadastrarInvestimento(Gerente gerente, String tipoInvestimento, double taxaRendimento, int senha) 
     {
+        // Verificar se a senha do gerente está correta
         if (gerente.verificaSenha(senha)) 
         {
-            // Lógica para cadastrar novo investimento no sistema
-            System.out.println("Investimento de tipo " + tipoInvestimento + " com taxa " + taxaRendimento + "% cadastrado.");
+            // Lógica para adicionar o investimento
+            Investimento novoInvestimento = new Investimento(tipoInvestimento, taxaRendimento);
+            investimentos.add(novoInvestimento);
+            System.out.println("Investimento de tipo " + tipoInvestimento + " com taxa " + taxaRendimento + "% cadastrado com sucesso!");
         } 
         else 
         {
@@ -197,7 +204,7 @@ public class Gerenciamento
 
     public void apoioMovimentacao(Gerente gerente, int senha) {
         Scanner teclado = new Scanner(System.in);
-        List<movimentacaoMilhao> transferenciasPendentes = new ArrayList<>();
+        //List<movimentacaoMilhao> transferenciasPendentes = new ArrayList<>();
         if(gerente.verificaSenha(senha)) {
            for (int i = 0; i < transferenciasPendentes.size(); i++) {
               movimentacaoMilhao atual = transferenciasPendentes.get(i);
@@ -226,7 +233,7 @@ public class Gerenciamento
     
     public void apoioSaque(Gerente gerente, int senha) {
         Scanner teclado = new Scanner(System.in);
-        List<saqueMilhao> saquesPendentes = new ArrayList<>();
+        //List<saqueMilhao> saquesPendentes = new ArrayList<>();
         if(gerente.verificaSenha(senha)) {
            for (int i = 0; i < saquesPendentes.size(); i++) {
               saqueMilhao atual = saquesPendentes.get(i);
@@ -288,7 +295,16 @@ public class Gerenciamento
                         Float valor = scanner.nextFloat();
                         scanner.nextLine();
                         
-                        realizarTransferencia(numeroDaContaOrigem, valor, senha);
+                        if(valor >= 1000000f)
+                        {
+                            System.out.println("O valor informado excede o limite de R$1000000,00. A transferência deve passar por análise do gerente.\n"
+                                    + "Digite o numero da conta de destino.");
+                            int numeroDaContaDestino = scanner.nextInt();
+                            scanner.nextLine();
+                            transferenciasPendentes.add(new movimentacaoMilhao(encontrarCliente(cpf, senha), cliente.retornaConta(numeroDaContaOrigem), cliente.retornaConta(numeroDaContaDestino), valor));
+                        }
+                        else
+                            realizarTransferencia(numeroDaContaOrigem, valor, senha);
                         break;
                     case 2:
                         System.out.print("Digite o número da conta: ");
@@ -299,7 +315,14 @@ public class Gerenciamento
                         Float valorSaque = scanner.nextFloat();
                         scanner.nextLine();
                         
-                        realizarSaque(cliente, valorSaque, senha, numeroDaConta );
+                        if(valorSaque >= 1000000f)
+                        {
+                            System.out.println("Valor de saque maior do que o limite de R$1000000,00. A operação necessita da aprovação de um gerente.");
+                            saquesPendentes.add(new saqueMilhao(cliente, cliente.retornaConta(numeroDaConta), valorSaque));
+                        }
+                        else
+                            realizarSaque(cliente, valorSaque, senha, numeroDaConta );
+                        
                         break;
                     case 3:
                         System.out.print("Digite valor do depósito: ");
@@ -322,65 +345,97 @@ public class Gerenciamento
         }
     }
     
-//    private void acessarGerente() 
-//    {
-//        System.out.print("Digite seu CPF: ");
-//        String cpf = scanner.nextLine();
-//        System.out.print("Digite sua senha: ");
-//        int senha = scanner.nextInt();
-//        
-//        Gerente gerente = encontrarGerente(cpf, senha);
-//        
-//        if (gerente != null) 
-//        {
-//            boolean continuarGerente = true;
-//            
-//            while (continuarGerente) 
-//            {
-//                System.out.println("\n==== Menu Gerente ====");
-//                System.out.println("1 - Aprovar Crédito");
-//                System.out.println("2 - Cadastrar Investimento");
-//                System.out.println("3 - Apoio Movimentação");
-//                System.out.println("4 - Apoio Saque");
-//                System.out.println("5 - Sair");
-//                System.out.print("Escolha uma opção: ");
-//                
-//                int opcao = scanner.nextInt();
-//                switch (opcao) 
-//                {
-//                    case 1:
-//                        aprovarCredito(gerente, cliente, valor, senha);
-//                        break;
-//                    case 2:
-//                        cadastrarInvestimento();
-//                        break;
-//                    case 3:
-//                        apoioMovimentacao();
-//                        break;
-//                    case 4:
-//                        apoioSaque();
-//                        break;
-//                    case 5:
-//                        continuarGerente = false;
-//                        System.out.println("Saindo...");
-//                        break;
-//                    default:
-//                        System.out.println("Opção inválida.");
-//                }
-//            }
-//        } 
-//        else 
-//        {
-//            System.out.println("Gerente não encontrado ou dados incorretos.");
-//        }
-//    }
+    private void acessarGerente() 
+    {
+        System.out.print("Digite seu CPF: ");
+        String cpf = scanner.nextLine();
+        System.out.print("Digite sua senha: ");
+        int senha = scanner.nextInt();
+        
+        Gerente gerente = encontrarGerente(cpf, senha);
+        
+        if (gerente != null) 
+        {
+            boolean continuarGerente = true;
+            
+            while (continuarGerente) 
+            {
+                System.out.println("\n==== Menu Gerente ====");
+                System.out.println("1 - Aprovar Crédito");
+                System.out.println("2 - Cadastrar Investimento");
+                System.out.println("3 - Apoio Movimentação");
+                System.out.println("4 - Apoio Saque");
+                System.out.println("5 - Sair");
+                System.out.print("Escolha uma opção: ");
+                
+                int opcao = scanner.nextInt();
+                switch (opcao) 
+                {
+                    case 1:
+                        System.out.println("Digite o CPF do cliente:");
+                        String cpfCliente = scanner.nextLine();
+                        Cliente cliente = encontrarCliente(cpfCliente);
+                        
+                        System.out.println("Digite o valor de crédito desejado:");
+                        Float valor = scanner.nextFloat();
+                        scanner.nextLine();
+                        
+                        System.out.println("Digite o numero da conta:");
+                        int numeroDaConta = scanner.nextInt();
+                        scanner.nextLine();
+                        
+                        aprovarCredito(gerente, cliente, valor, senha, numeroDaConta);
+                        break;
+                    case 2:
+                        System.out.println("Digite o tipo de investimento:");
+                        String tipoDeInvestimento = scanner.nextLine();
+                        
+                        System.out.println("Digite a taca de rendimento do investimento:");
+                        int taxaDeRendimento = scanner.nextInt();
+                        scanner.nextLine();
+                        
+                        cadastrarInvestimento(gerente, tipoDeInvestimento, taxaDeRendimento, senha);
+                        break;
+                    case 3:
+                        apoioMovimentacao(gerente, senha);
+                        break;
+                    case 4:
+                        apoioSaque(gerente, senha);
+                        break;
+                    case 5:
+                        continuarGerente = false;
+                        System.out.println("Saindo...");
+                        break;
+                    default:
+                        System.out.println("Opção inválida.");
+                }
+            }
+        } 
+        else 
+        {
+            System.out.println("Gerente não encontrado ou dados incorretos.");
+        }
+    }
     
-    // Métodos de busca para encontrar usuário pelo CPF e senha
+    // Métodos de busca para encontrar usuário pelo CPF
     private Cliente encontrarCliente(String cpf, int senha) 
     {
         for (Cliente cliente : clientes) 
         {
             if (cliente.getCpf().equals(cpf) && cliente.verificaSenha(senha)) 
+            {
+                return cliente;
+            }
+        }
+        return null;
+    }
+    
+    // Métodos de busca para encontrar usuário pelo CPF e senha
+    private Cliente encontrarCliente(String cpf) 
+    {
+        for (Cliente cliente : clientes) 
+        {
+            if (cliente.getCpf().equals(cpf)) 
             {
                 return cliente;
             }
@@ -411,47 +466,47 @@ public class Gerenciamento
         }
         return null;
     }
-//    public void menu() 
-//    {
-//        boolean continuar = true;
-//        
-//        while (continuar) 
-//        {
-//            System.out.println("=================================");
-//            System.out.println("Bem-vindo ao Sistema Bancário!");
-//            System.out.println("1 - Cadastrar novo usuário");
-//            System.out.println("2 - Acessar como cliente");
-//            System.out.println("3 - Acessar como caixa");
-//            System.out.println("4 - Acessar como gerente");
-//            System.out.println("5 - Sair");
-//            System.out.print("Escolha uma opção: ");
-//            
-//            int opcao = scanner.nextInt();
-//            scanner.nextLine();  // Consumir a nova linha que fica após a escolha
-//            
-//            switch (opcao) 
-//            {
-//                case 1:
-//                    cadastrarUsuario();
-//                    break;
-//                case 2:
-//                    acessarClienteCaixa();
-//                    break;
-//                case 3:
-//                    acessarClienteCaixa();
-//                    break;
-//                case 4:
-//                    acessarGerente();
-//                    break;
-//                case 5:
-//                    continuar = false;
-//                    System.out.println("Saindo do sistema...");
-//                    break;
-//                default:
-//                    System.out.println("Opção inválida. Tente novamente.");
-//            }
-//        }
-//    }
+    public void menu() 
+    {
+        boolean continuar = true;
+        
+        while (continuar) 
+        {
+            System.out.println("=================================");
+            System.out.println("Bem-vindo ao Sistema Bancário!");
+            System.out.println("1 - Cadastrar novo usuário");
+            System.out.println("2 - Acessar como cliente");
+            System.out.println("3 - Acessar como caixa");
+            System.out.println("4 - Acessar como gerente");
+            System.out.println("5 - Sair");
+            System.out.print("Escolha uma opção: ");
+            
+            int opcao = scanner.nextInt();
+            scanner.nextLine();  // Consumir a nova linha que fica após a escolha
+            
+            switch (opcao) 
+            {
+                case 1:
+                    cadastrarUsuario();
+                    break;
+                case 2:
+                    acessarClienteCaixa();
+                    break;
+                case 3:
+                    acessarClienteCaixa();
+                    break;
+                case 4:
+                    acessarGerente();
+                    break;
+                case 5:
+                    continuar = false;
+                    System.out.println("Saindo do sistema...");
+                    break;
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+    }
 
 }
     
