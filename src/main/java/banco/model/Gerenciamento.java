@@ -17,6 +17,9 @@ public class Gerenciamento
     private ArrayList<Investimento> investimentos = new ArrayList<>();
     private List<movimentacaoMilhao> transferenciasPendentes = new ArrayList<>();
     private List<saqueMilhao> saquesPendentes = new ArrayList<>();
+    private ArrayList<SolicitacaoCredito> solicitacoesCredito = new ArrayList<>();
+    
+    private Conta fundoDeInvestimentos;
     
     private static Scanner scanner = new Scanner(System.in);
     
@@ -28,6 +31,10 @@ public class Gerenciamento
         investimentos = new ArrayList<>();
         transferenciasPendentes = new ArrayList();
         saquesPendentes = new ArrayList<>();
+        solicitacoesCredito = new ArrayList<>();
+        
+        //conta do próprio bando, somente para receber as transferências de investimento
+        fundoDeInvestimentos = new Conta(000000);
     }
     
     private void cadastrarUsuario() 
@@ -136,7 +143,7 @@ public class Gerenciamento
             if (cliente.retornaSaldo(numeroDaConta) >= valor) 
             {
                 cliente.realizarSaque(valor);
-                System.out.println("Saque realizado com sucesso!");
+                //System.out.println("Saque realizado com sucesso!");
                 //clientes.get(i).registraMovimentacao("Saque no valor de R$" + valor);
             } 
             else 
@@ -157,6 +164,21 @@ public class Gerenciamento
     public void imprimirExtrato(int i)
     {
         clientes.get(i).gerarExtrato();
+    }
+    
+    public void solicitarCredito(Cliente cliente) 
+    {
+        scanner = new Scanner(System.in);
+
+        // Solicitar o valor de crédito desejado
+        System.out.println("Digite o valor desejado para crédito:");
+        double valorCredito = scanner.nextDouble();
+
+        // Adicionar a solicitação ao ArrayList de solicitações
+        solicitacoesCredito.add(new SolicitacaoCredito(cliente, valorCredito));
+        System.out.println("Solicitação de crédito de R$" + valorCredito + " registrada com sucesso.");
+
+        // Opcionalmente, você pode adicionar lógica para processar ou aprovar o crédito aqui.
     }
 
         // Método para aprovar crédito para um cliente
@@ -259,9 +281,134 @@ public class Gerenciamento
            }
         }
     }
+    
+    public void listarInvestimentos()
+    {
+        for(int i=0; i<investimentos.size(); i++)
+        {
+            System.out.println("( " + i+1 + ")");
+            investimentos.get(i).imprimeInvestimento();
+        }
+    }
 
+    public void realizaInvestimento(Cliente cliente)
+    {
+        System.out.println("Digite o valor a ser investido: ");
+        Float valorDoInvestimento = scanner.nextFloat();
+        scanner.nextLine();
+        
+        System.out.println("Confirme o numero da sua conta: ");
+        int numeroDaConta = scanner.nextInt();
+
+        listarInvestimentos();
+        System.out.println("Digite o codigo do investimento que deseja realizar: ");
+        int i = scanner.nextInt();
+        scanner.nextLine();
+        
+        realizarSaque(cliente, valorDoInvestimento, cliente.getSenha(), numeroDaConta);
+        fundoDeInvestimentos.deposito(valorDoInvestimento);
+        
+        investimentos.get(i-1).realizarInvestimento(valorDoInvestimento);
+    }
+    
     //fiz um único método, pois os clientes e os caixas têm acesso às exatas mesmas funções
-    private void acessarClienteCaixa() 
+    private void acessarCliente() 
+    {
+        System.out.print("Digite seu CPF: ");
+        String cpf = scanner.nextLine();
+        System.out.print("Digite sua senha: ");
+        int senha = scanner.nextInt();
+        
+        Cliente cliente = encontrarCliente(cpf, senha);
+        
+        if (cliente != null) 
+        {
+            boolean continuarCliente = true;
+            
+            while (continuarCliente) 
+            {
+                System.out.println("\n==== Menu Cliente ====");
+                System.out.println("1 - Realizar Transferência");
+                System.out.println("2 - Realizar Saque");
+                System.out.println("3 - Realizar Depósito");
+                System.out.println("4 - Solicitar Crédito");
+                System.out.println("5 - Listar Investimentos Disponíveis");
+                System.out.println("6 - Realizar Investimento");
+                System.out.println("7 - Sair");
+                System.out.print("Escolha uma opção: ");
+                
+                int opcao = scanner.nextInt();
+                switch(opcao) 
+                {
+                    case 1:
+                        System.out.print("Digite o número da conta de origem: ");
+                        int numeroDaContaOrigem = scanner.nextInt();
+                        scanner.nextLine();
+                        
+                        System.out.print("Digite valor de transferência: ");
+                        Float valor = scanner.nextFloat();
+                        scanner.nextLine();
+                        
+                        if(valor >= 1000000f)
+                        {
+                            System.out.println("O valor informado excede o limite de R$1000000,00. A transferência deve passar por análise do gerente.\n"
+                                    + "Digite o numero da conta de destino.");
+                            int numeroDaContaDestino = scanner.nextInt();
+                            scanner.nextLine();
+                            transferenciasPendentes.add(new movimentacaoMilhao(encontrarCliente(cpf, senha), cliente.retornaConta(numeroDaContaOrigem), cliente.retornaConta(numeroDaContaDestino), valor));
+                        }
+                        else
+                            realizarTransferencia(numeroDaContaOrigem, valor, senha);
+                        break;
+                    case 2:
+                        System.out.print("Digite o número da conta: ");
+                        int numeroDaConta = scanner.nextInt();
+                        scanner.nextLine();
+                        
+                        System.out.print("Digite valor do saque: ");
+                        Float valorSaque = scanner.nextFloat();
+                        scanner.nextLine();
+                        
+                        if(valorSaque >= 1000000f)
+                        {
+                            System.out.println("Valor de saque maior do que o limite de R$1000000,00. A operação necessita da aprovação de um gerente.");
+                            saquesPendentes.add(new saqueMilhao(cliente, cliente.retornaConta(numeroDaConta), valorSaque));
+                        }
+                        else
+                            realizarSaque(cliente, valorSaque, senha, numeroDaConta );
+                        
+                        break;
+                    case 3:
+                        System.out.print("Digite valor do depósito: ");
+                        Float valorDeposito = scanner.nextFloat();
+                        scanner.nextLine();
+                        realizarDeposito(cliente, valorDeposito);
+                        break;
+                    case 4:
+                        solicitarCredito(cliente);
+                        break;
+                    case 5:
+                        listarInvestimentos();
+                        break;
+                    case 6:
+                        realizaInvestimento(cliente);
+                        break;
+                    case 7:
+                        continuarCliente = false;
+                        System.out.println("Saindo...");
+                        break;
+                    default:
+                        System.out.println("Opção inválida.");
+                }
+            }
+        } 
+        else 
+        {
+            System.out.println("Cliente não encontrado ou dados incorretos.");
+        }
+    }
+    
+    private void acessarCaixa() 
     {
         System.out.print("Digite seu CPF: ");
         String cpf = scanner.nextLine();
@@ -490,10 +637,10 @@ public class Gerenciamento
                     cadastrarUsuario();
                     break;
                 case 2:
-                    acessarClienteCaixa();
+                    acessarCliente();
                     break;
                 case 3:
-                    acessarClienteCaixa();
+                    acessarCaixa();
                     break;
                 case 4:
                     acessarGerente();
@@ -509,14 +656,3 @@ public class Gerenciamento
     }
 
 }
-    
-    
-    
-
-
-
-
-
-
-
-

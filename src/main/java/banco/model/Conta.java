@@ -30,6 +30,13 @@ public class Conta {
     public Conta() {
         this.movimentacoes = new ArrayList<>();
     }
+    
+    public Conta(int numeroDaConta)
+    {
+        this.numeroDaConta = numeroDaConta;
+        saldo = 0f;
+        this.movimentacoes = new ArrayList<>();
+    }
 
     public Conta(int numero, int dono) {
         Validador.validarNumeroConta(numero);
