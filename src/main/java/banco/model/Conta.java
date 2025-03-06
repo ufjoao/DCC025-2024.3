@@ -31,6 +31,13 @@ public class Conta {
     {
         this.movimentacoes = new ArrayList<>();
     }
+    
+    public Conta(int numeroDaConta)
+    {
+        this.numeroDaConta = numeroDaConta;
+        saldo = 0f;
+        this.movimentacoes = new ArrayList<>();
+    }
 
     public Conta(int numero, Cliente dono) 
     {
