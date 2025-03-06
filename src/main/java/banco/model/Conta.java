@@ -6,7 +6,8 @@ package banco.model;
 
 import banco.exception.Validador;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 /**
@@ -15,15 +16,14 @@ import java.util.ArrayList;
  */
 public class Conta {
 
-    @JsonProperty("numeroDaConta")
+     @Expose
     private int numeroDaConta;
     private String agencia;
-    @JsonProperty("saldo")
+     @Expose
     private float saldo;
-    private int senha;
-    @JsonProperty("movimentacoes")
+     @Expose
     private ArrayList<String> movimentacoes;
-    @JsonProperty("dono")
+    @SerializedName("cliente")
     private Cliente dono;
     private static ArrayList<Conta> contasRegistradas = new ArrayList<>();
 
@@ -32,14 +32,12 @@ public class Conta {
         this.movimentacoes = new ArrayList<>();
     }
 
-    public Conta(int numero, int senha, Cliente dono) 
+    public Conta(int numero, Cliente dono) 
     {
         Validador.validarNumeroConta(numero);
         this.numeroDaConta = numero;
         this.agencia = "0001";
         this.saldo = 0;
-        Validador.validarSenhaDaConta(senha, numero);
-        this.senha = senha;
         this.movimentacoes = new ArrayList<>();
         this.dono = dono;
         addContaRegistro();
@@ -55,10 +53,6 @@ public class Conta {
         return dono;
     }
 
-    public boolean verificarSenha(int senhaInformada) 
-    {
-        return this.senha == senhaInformada;
-    }
 
     public String getAgencia() 
     {

@@ -1,9 +1,13 @@
 package banco.view;
 
+import banco.model.Cliente;
+import banco.model.Caixa;
+import banco.model.Gerente;
+import banco.persistence.Persistence;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.List;
 
 public class TelaLogin extends JFrame {
     private JTextField campoCpf;
@@ -17,7 +21,6 @@ public class TelaLogin extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new GridLayout(3, 2));
 
-        // Componentes da tela
         add(new JLabel("CPF:"));
         campoCpf = new JTextField();
         add(campoCpf);
@@ -32,33 +35,69 @@ public class TelaLogin extends JFrame {
         add(botaoCadastrar);
 
         // Ação do botão "Entrar"
-        botaoEntrar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Simula o login e abre a tela de boas-vindas
-                abrirTelaBoasVindas();
-            }
-        });
+        botaoEntrar.addActionListener((ActionEvent e) -> autenticarUsuario());
 
-        setVisible(true);  // Tornar a janela visível
+        // Ação do botão "Cadastrar"
+        botaoCadastrar.addActionListener((ActionEvent e) -> cadastrarUsuario());
+
+        setVisible(true);
     }
 
-    // Método para abrir a tela de boas-vindas após o login
-    private void abrirTelaBoasVindas() {
-        // Fechar a tela de login
+    private void autenticarUsuario() {
+        String cpf = campoCpf.getText();
+        String senhaDigitada = new String(campoSenha.getPassword());
+
+        // Carregar lista de usuários (Clientes, Caixas, Gerentes)
+        List<Cliente> clientes = Persistence.carregarClientes();
+        List<Caixa> caixas = Persistence.carregarCaixas();
+        List<Gerente> gerentes = Persistence.carregarGerentes();
+
+        // Verifica se é Cliente
+        for (Cliente c : clientes) {
+            if (c.getCpf().equals(cpf) && String.valueOf(c.getSenha()).equals(senhaDigitada)) {
+                abrirTelaUsuario("Cliente");
+                return;
+            }
+        }
+
+        // Verifica se é Caixa
+        for (Caixa cx : caixas) {
+            if (cx.getCpf().equals(cpf) && String.valueOf(cx.getSenha()).equals(senhaDigitada)) {
+                abrirTelaUsuario("Caixa");
+                return;
+            }
+        }
+
+        // Verifica se é Gerente
+        for (Gerente g : gerentes) {
+            if (g.getCpf().equals(cpf) && String.valueOf(g.getSenha()).equals(senhaDigitada)) {
+                abrirTelaUsuario("Gerente");
+                return;
+            }
+        }
+
+        // Se não encontrou nenhum usuário válido
+        JOptionPane.showMessageDialog(this, "CPF ou senha incorretos!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void cadastrarUsuario() {
+        String cpf = campoCpf.getText();
+        String senhaDigitada = new String(campoSenha.getPassword());
+
+        // Criar um novo Cliente como exemplo
+        Cliente novoCliente = new Cliente("Novo Cliente", cpf, Integer.parseInt(senhaDigitada));
+        
+        // Adicionar o usuário à persistência
+        Persistence.addCliente(novoCliente);
+        JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso!");
+
+        // Fechar tela de login após cadastro
         this.dispose();
+    }
 
-        // Criar e mostrar a tela de boas-vindas
-        JFrame telaBoasVindas = new JFrame("Boas-vindas");
-        telaBoasVindas.setSize(300, 150);
-        telaBoasVindas.setLocationRelativeTo(null); // Janela centralizada
-        telaBoasVindas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Adiciona um painel simples com uma mensagem de boas-vindas
-        JPanel painelBoasVindas = new JPanel();
-        painelBoasVindas.add(new JLabel("Bem-vindo ao Banco!"));
-        telaBoasVindas.add(painelBoasVindas);
-
-        telaBoasVindas.setVisible(true);
+    private void abrirTelaUsuario(String tipoUsuario) {
+        JOptionPane.showMessageDialog(this, "Login bem-sucedido! Tipo: " + tipoUsuario);
+        this.dispose(); // Fecha a tela de login
+        new TelaUsuario(tipoUsuario); // Abre a tela do usuário correspondente
     }
 }
