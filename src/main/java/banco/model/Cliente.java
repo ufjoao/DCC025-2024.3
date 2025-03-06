@@ -66,8 +66,8 @@ public class Cliente extends Usuario {
         contas.get(contas.indexOf(this)).saque(valor);
     }
 
-    public void consultarSaldo() {
-        contas.get(contas.indexOf(this)).consultaSaldo();
+    public float consultarSaldo() {
+        return contas.get(contas.indexOf(this)).consultaSaldo();
     }
 
     public float retornaSaldo(int numeroDaConta) {
@@ -80,8 +80,14 @@ public class Cliente extends Usuario {
         return -1.f;
     }
 
-    public void gerarExtrato() {
-        contas.get(contas.indexOf(this)).gerarExtrato();
+    public String gerarExtrato() {
+        StringBuilder extratoCompleto = new StringBuilder("Extrato do Cliente:\n\n");
+
+        for (Conta conta : contas) {
+            extratoCompleto.append(conta.gerarExtrato()).append("\n------------------\n");
+        }
+
+        return extratoCompleto.toString();
     }
 
     public boolean verificaNumeroDaConta(int numeroDaConta) {

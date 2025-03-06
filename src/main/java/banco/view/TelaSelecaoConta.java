@@ -28,13 +28,13 @@ public class TelaSelecaoConta extends JFrame {
         // Adicionar os números das contas em uma lista
         JList<String> listaContas = new JList<>();
         DefaultListModel<String> model = new DefaultListModel<>();
-        
+
         // Adicionar os números das contas à lista
         for (Conta conta : cliente.getContas()) {
             model.addElement(String.valueOf(conta.getNumeroDaConta()));
         }
         listaContas.setModel(model);
-        
+
         JScrollPane scrollPane = new JScrollPane(listaContas);
         panel.add(scrollPane);
 
@@ -50,17 +50,17 @@ public class TelaSelecaoConta extends JFrame {
 
     private void selecionarConta(JList<String> listaContas) {
         String contaSelecionada = listaContas.getSelectedValue();
-        
+
         if (contaSelecionada != null) {
             // Convertendo o número da conta de String para int
             int numeroConta = Integer.parseInt(contaSelecionada);
             Conta conta = buscarContaPeloNumero(numeroConta);
-            
+
             // Exemplo: Exibir um JOptionPane com a conta selecionada
             JOptionPane.showMessageDialog(this, "Você selecionou a conta número: " + conta.getNumeroDaConta());
-            new TelaUsuario("Cliente", cliente.getId());
+            abrirTelaUsuario(conta.getNumeroDaConta(), "Cliente");
             this.dispose();
-            
+
             // Aqui, você pode fazer o que for necessário com a conta, por exemplo, redirecionar para outra tela
             // ou permitir ao cliente realizar operações na conta.
         } else {
@@ -75,5 +75,11 @@ public class TelaSelecaoConta extends JFrame {
             }
         }
         return null;
+    }
+
+    private void abrirTelaUsuario(int id, String tipoUsuario) {
+        JOptionPane.showMessageDialog(this, "Login bem-sucedido! Tipo: " + tipoUsuario);
+        new TelaUsuario(tipoUsuario, id);
+        this.dispose();
     }
 }

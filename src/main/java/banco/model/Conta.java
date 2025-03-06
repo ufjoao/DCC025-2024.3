@@ -30,9 +30,8 @@ public class Conta {
     public Conta() {
         this.movimentacoes = new ArrayList<>();
     }
-    
-    public Conta(int numeroDaConta)
-    {
+
+    public Conta(int numeroDaConta) {
         this.numeroDaConta = numeroDaConta;
         saldo = 0f;
         this.movimentacoes = new ArrayList<>();
@@ -49,14 +48,14 @@ public class Conta {
     public Cliente getDono() {
         return Persistence.buscarClientePorId(clienteId);
     }
-    
-    public int getClienteId() {
-    return clienteId;
-}
 
-public void setClienteId(int clienteId) {
-    this.clienteId = clienteId;
-}
+    public int getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(int clienteId) {
+        this.clienteId = clienteId;
+    }
 
     public float getSaldo() {
         return saldo;
@@ -110,22 +109,22 @@ public void setClienteId(int clienteId) {
         movimentacoes.add("Transferência de R$ " + valor + " para conta " + destino.getNumeroDaConta());
     }
 
-    void consultaSaldo() {
-        System.out.println("Saldo da Conta\n");
-        System.out.println("Saldo: R$" + saldo);
+    float consultaSaldo() {
+        return saldo;
     }
 
-    void gerarExtrato() {
-        System.out.println("Extrato da Conta\n");
+    public String gerarExtrato() {
+        StringBuilder extrato = new StringBuilder("Extrato da Conta:\n\n");
 
-        if (movimentacoes != null) {
-            System.out.println("Ultimas movimentacoes da conta:");
-
-            for (int i = 0; i < movimentacoes.size(); i++) {
-                System.out.println(movimentacoes.get(i));
+        if (movimentacoes != null && !movimentacoes.isEmpty()) {
+            extrato.append("Últimas movimentações:\n");
+            for (String movimentacao : movimentacoes) {
+                extrato.append(movimentacao).append("\n");
             }
         } else {
-            System.out.println("Conta sem movimentacoes");
+            extrato.append("Conta sem movimentações.");
         }
+
+        return extrato.toString();
     }
 }
