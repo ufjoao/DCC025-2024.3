@@ -19,6 +19,7 @@ public class Cliente extends Usuario {
 
     public Cliente() {
         super("", "", 0); // Valor padrão para inicializar
+        this.contas = new ArrayList<>();
     }
 
     @Override
@@ -26,18 +27,22 @@ public class Cliente extends Usuario {
         return "Cliente";
     }
 
+    public void criarConta(int numeroConta) {
+        Conta novaConta = new Conta(numeroConta, this.getId()); // Passa o cliente como referência
+        this.contas.add(novaConta);
+    }
+
     public List<Conta> getContas() {
         return contas;
     }
-    
-        public Conta retornaConta(int numeroDaConta)
-    {
-        for(int i=0; i<contas.size(); i++)
-        {
-            if(verificaNumeroDaConta(numeroDaConta))
+
+    public Conta retornaConta(int numeroDaConta) {
+        for (int i = 0; i < contas.size(); i++) {
+            if (verificaNumeroDaConta(numeroDaConta)) {
                 return contas.get(i);
+            }
         }
-        
+
         System.out.println("Conta não encontrada");
         return null;
     }
@@ -51,14 +56,6 @@ public class Cliente extends Usuario {
             throw new IllegalArgumentException("Conta não pode ser nula.");
         }
         contas.add(conta);
-    }
-
-    public void addContaRegistro(Conta conta) {
-        Persistence.addCliente(this);
-    }
-
-    public void criarConta(int numeroConta) {
-        this.contas.add(new Conta(numeroConta, this));
     }
 
     public void realizarDeposito(float valor) {

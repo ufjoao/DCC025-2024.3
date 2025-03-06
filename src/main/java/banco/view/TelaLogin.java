@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 public class TelaLogin extends JFrame {
+
     private JTextField campoCpf;
     private JPasswordField campoSenha;
     private JButton botaoEntrar, botaoCadastrar;
@@ -81,17 +82,7 @@ public class TelaLogin extends JFrame {
     }
 
     private void cadastrarUsuario() {
-        String cpf = campoCpf.getText();
-        String senhaDigitada = new String(campoSenha.getPassword());
-
-        // Criar um novo Cliente como exemplo
-        Cliente novoCliente = new Cliente("Novo Cliente", cpf, Integer.parseInt(senhaDigitada));
-        
-        // Adicionar o usuário à persistência
-        Persistence.addCliente(novoCliente);
-        JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso!");
-
-        // Fechar tela de login após cadastro
+        new TelaSelecaoCadastro();
         this.dispose();
     }
 

@@ -103,6 +103,47 @@ public class Persistence {
         }
     }
 
+    public static void salvarConta(Conta conta) {
+        // Busca o cliente dono da conta
+        Cliente dono = buscarClientePorId(conta.getDono().getId());
+
+        if (dono != null) {
+            // Atualiza a conta dentro do cliente
+            for (int i = 0; i < dono.getContas().size(); i++) {
+                if (dono.getContas().get(i).getNumeroDaConta() == conta.getNumeroDaConta()) {
+                    // Atualiza a conta no cliente
+                    dono.getContas().set(i, conta);
+                    // Salva o cliente com a conta modificada
+                    salvarCliente(dono);  // Chama o método para reescrever os dados do cliente
+                    return; // Retorna após salvar
+                }
+            }
+        }
+
+        System.out.println("Conta ou cliente não encontrados.");
+    }
+
+    public static void salvarCliente(Cliente cliente) {
+        // Carregar todos os clientes
+        List<Cliente> clientes = carregarClientes();
+
+        // Encontrar o cliente pelo ID e atualizar
+        for (int i = 0; i < clientes.size(); i++) {
+            if (clientes.get(i).getId() == cliente.getId()) {
+                // Atualiza o cliente na lista
+                clientes.set(i, cliente);
+
+                // Salva os clientes atualizados no arquivo
+                salvarClientes(clientes);
+                return; // Retorna após salvar o cliente
+            }
+        }
+
+        // Se o cliente não for encontrado, podemos adicionar um novo
+        clientes.add(cliente);
+        salvarClientes(clientes); // Salva os dados no arquivo
+    }
+
     // Carrega os clientes do arquivo JSON
     public static List<Cliente> carregarClientes() {
         try (FileReader reader = new FileReader("clientes.json")) {
@@ -154,5 +195,37 @@ public class Persistence {
     public static int gerarIdAleatorio() {
         Random rand = new Random();
         return rand.nextInt(1000000);  // Gera um ID entre 0 e 999999
+    }
+
+    public static Cliente buscarClientePorId(int id) {
+        Gson gson = new Gson();
+
+        try (FileReader reader = new FileReader("clientes.json")) {
+            Type listType = new TypeToken<List<Cliente>>() {
+            }.getType();
+            List<Cliente> clientes = gson.fromJson(reader, listType);
+
+            for (Cliente cliente : clientes) {
+                if (cliente.getId() == id) {
+                    return cliente;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null; // Retorna null se não encontrar o cliente
+    }
+
+    public static Conta buscarContaPorNumero(int numeroConta) {
+        List<Cliente> clientes = carregarClientes();
+        for (Cliente cliente : clientes) {
+            for (Conta conta : cliente.getContas()) {
+                if (conta.getNumeroDaConta() == numeroConta) {
+                    return conta;
+                }
+            }
+        }
+        throw new NoSuchElementException("Conta com número " + numeroConta + " não encontrada.");
     }
 }
