@@ -5,6 +5,8 @@
 package banco.model;
 
 import banco.exception.Validador;
+import banco.persistence.Persistence;
+import com.google.gson.annotations.Expose;
 
 /**
  *
@@ -12,20 +14,38 @@ import banco.exception.Validador;
  */
 public abstract class Usuario {
 
+    @Expose
+    private int id;
+    @Expose
     private String nome;
+    @Expose
     private String cpf;
+    @Expose
     private int senha;
 
-    protected Usuario() {}
-    
+    protected Usuario() {
+    }
+
     public Usuario(String nome, String cpf, int senha) {
-        Validador.validarNome(nome);
-        Validador.validarCpf(cpf);
-        
+        this.id = Persistence.gerarIdAleatorio();
         this.nome = nome;
         this.cpf = cpf;
         this.senha = senha;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getSenha() {
+        return senha;
+    }
+
+    public abstract String getTipo();
 
     public String getNome() {
         return nome;

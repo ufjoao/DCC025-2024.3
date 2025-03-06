@@ -15,7 +15,6 @@ public class saqueMilhao {
     private Cliente cliente;
     private Conta conta;
     private float valor;
-    ArrayList<Conta> contas = Persistence.carregarContas();
     
     public saqueMilhao(Cliente cliente, Conta conta, float valor) {
         this.cliente = cliente;
@@ -42,6 +41,5 @@ public class saqueMilhao {
     public void executarSaque() {
         conta.saque(valor);
         System.out.println("Saque realizado com sucesso!");
-        Persistence.salvarContas(contas);
     }
 }

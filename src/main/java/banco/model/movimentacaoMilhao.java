@@ -17,7 +17,6 @@ public class movimentacaoMilhao {
     private Conta origem;
     private Conta destino;
     private float valor;
-    ArrayList<Conta> contas = Persistence.carregarContas();
     
     public movimentacaoMilhao(Cliente cliente, Conta origem, Conta destino, float valor) {
         this.cliente = cliente;
@@ -57,8 +56,6 @@ public class movimentacaoMilhao {
         destino.adicionarMovimentacao("Transferência recebida de " + getNomeCliente() + " no valor de: " + valor);
 
         
-        // Salva os clientes atualizados no JSON
-        Persistence.salvarContas(contas);
         System.out.println("Transferência realizada com sucesso!"); 
     }            
 }
