@@ -36,45 +36,6 @@ public class Persistence {
         salvarClientes(clientes);
     }
 
-    // Método para adicionar ou atualizar um caixa
-    public static void addCaixa(Caixa caixa) {
-        List<Caixa> caixas = carregarCaixas();
-
-        boolean caixaExistente = false;
-        for (int i = 0; i < caixas.size(); i++) {
-            if (caixas.get(i).getId() == caixa.getId()) {
-                caixas.set(i, caixa); // Atualiza o caixa
-                caixaExistente = true;
-                break;
-            }
-        }
-
-        if (!caixaExistente) {
-            caixas.add(caixa);
-        }
-
-        salvarCaixas(caixas);
-    }
-
-    public static void addGerente(Gerente gerente) {
-        List<Gerente> gerentes = carregarGerentes();
-
-        boolean gerenteExistente = false;
-        for (int i = 0; i < gerentes.size(); i++) {
-            if (gerentes.get(i).getId() == gerente.getId()) {
-                gerentes.set(i, gerente); // Atualiza o gerente
-                gerenteExistente = true;
-                break;
-            }
-        }
-
-        if (!gerenteExistente) {
-            gerentes.add(gerente);
-        }
-
-        salvarGerentes(gerentes);
-    }
-
     // Salva os clientes no arquivo JSON
     public static void salvarClientes(List<Cliente> clientes) {
         try (FileWriter writer = new FileWriter("clientes.json")) {
@@ -83,44 +44,6 @@ public class Persistence {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void salvarCaixas(List<Caixa> caixas) {
-        try (FileWriter writer = new FileWriter("caixas.json")) {
-            Gson gson = new Gson();
-            gson.toJson(caixas, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void salvarGerentes(List<Gerente> gerentes) {
-        try (FileWriter writer = new FileWriter("gerentes.json")) {
-            Gson gson = new Gson();
-            gson.toJson(gerentes, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void salvarConta(Conta conta) {
-        // Busca o cliente dono da conta
-        Cliente dono = buscarClientePorId(conta.getDono().getId());
-
-        if (dono != null) {
-            // Atualiza a conta dentro do cliente
-            for (int i = 0; i < dono.getContas().size(); i++) {
-                if (dono.getContas().get(i).getNumeroDaConta() == conta.getNumeroDaConta()) {
-                    // Atualiza a conta no cliente
-                    dono.getContas().set(i, conta);
-                    // Salva o cliente com a conta modificada
-                    salvarCliente(dono);  // Chama o método para reescrever os dados do cliente
-                    return; // Retorna após salvar
-                }
-            }
-        }
-
-        System.out.println("Conta ou cliente não encontrados.");
     }
 
     public static void salvarCliente(Cliente cliente) {
@@ -157,6 +80,34 @@ public class Persistence {
         }
     }
 
+    public static void addCaixa(Caixa caixa) {
+        List<Caixa> caixas = carregarCaixas();
+
+        boolean caixaExistente = false;
+        for (int i = 0; i < caixas.size(); i++) {
+            if (caixas.get(i).getId() == caixa.getId()) {
+                caixas.set(i, caixa); // Atualiza o caixa
+                caixaExistente = true;
+                break;
+            }
+        }
+
+        if (!caixaExistente) {
+            caixas.add(caixa);
+        }
+
+        salvarCaixas(caixas);
+    }
+
+    public static void salvarCaixas(List<Caixa> caixas) {
+        try (FileWriter writer = new FileWriter("caixas.json")) {
+            Gson gson = new Gson();
+            gson.toJson(caixas, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static List<Caixa> carregarCaixas() {
         try (FileReader reader = new FileReader("caixas.json")) {
             Gson gson = new Gson();
@@ -166,6 +117,34 @@ public class Persistence {
         } catch (IOException e) {
             e.printStackTrace();
             return new ArrayList<>();
+        }
+    }
+
+    public static void addGerente(Gerente gerente) {
+        List<Gerente> gerentes = carregarGerentes();
+
+        boolean gerenteExistente = false;
+        for (int i = 0; i < gerentes.size(); i++) {
+            if (gerentes.get(i).getId() == gerente.getId()) {
+                gerentes.set(i, gerente); // Atualiza o gerente
+                gerenteExistente = true;
+                break;
+            }
+        }
+
+        if (!gerenteExistente) {
+            gerentes.add(gerente);
+        }
+
+        salvarGerentes(gerentes);
+    }
+
+    public static void salvarGerentes(List<Gerente> gerentes) {
+        try (FileWriter writer = new FileWriter("gerentes.json")) {
+            Gson gson = new Gson();
+            gson.toJson(gerentes, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -181,14 +160,24 @@ public class Persistence {
         }
     }
 
-    // Método genérico para carregar dados
-    private static <T> List<T> carregarDados(String filename, Type type, Gson gson) {
-        try (FileReader reader = new FileReader(filename)) {
-            return gson.fromJson(reader, type);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+    public static void salvarConta(Conta conta) {
+        // Busca o cliente dono da conta
+        Cliente dono = buscarClientePorId(conta.getDono().getId());
+
+        if (dono != null) {
+            // Atualiza a conta dentro do cliente
+            for (int i = 0; i < dono.getContas().size(); i++) {
+                if (dono.getContas().get(i).getNumeroDaConta() == conta.getNumeroDaConta()) {
+                    // Atualiza a conta no cliente
+                    dono.getContas().set(i, conta);
+                    // Salva o cliente com a conta modificada
+                    salvarCliente(dono);  // Chama o método para reescrever os dados do cliente
+                    return; // Retorna após salvar
+                }
+            }
         }
+
+        System.out.println("Conta ou cliente não encontrados.");
     }
 
     // Gera um ID aleatório para o usuário

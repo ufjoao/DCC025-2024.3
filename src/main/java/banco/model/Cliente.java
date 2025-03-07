@@ -27,9 +27,10 @@ public class Cliente extends Usuario {
         return "Cliente";
     }
 
-    public void criarConta(int numeroConta) {
-        Conta novaConta = new Conta(numeroConta, this.getId()); // Passa o cliente como referência
-        this.contas.add(novaConta);
+    public void criarConta(int numeroDaConta) {
+        // Cria a conta e associa o cliente como dono
+        Conta novaConta = new Conta(numeroDaConta, this.getId());  // 'this' é o cliente
+        this.adicionarConta(novaConta);  // Adiciona a conta à lista de contas do cliente
     }
 
     public List<Conta> getContas() {
@@ -52,32 +53,18 @@ public class Cliente extends Usuario {
     }
 
     public void adicionarConta(Conta conta) {
-        if (conta == null) {
-            throw new IllegalArgumentException("Conta não pode ser nula.");
+        if (this.contas == null) {
+            this.contas = new ArrayList<>();
         }
-        contas.add(conta);
+        this.contas.add(conta);  // Adiciona a conta à lista de contas do cliente
     }
 
-    public void realizarDeposito(float valor) {
-        contas.get(contas.indexOf(this)).deposito(valor);
+    public float consultarSaldo(Conta conta) {
+        return conta.consultaSaldo();
     }
 
-    public void realizarSaque(float valor) {
-        contas.get(contas.indexOf(this)).saque(valor);
-    }
-
-    public float consultarSaldo() {
-        return contas.get(contas.indexOf(this)).consultaSaldo();
-    }
-
-    public float retornaSaldo(int numeroDaConta) {
-        for (int i = 0; i < contas.size(); i++) {
-            if (verificaNumeroDaConta(numeroDaConta)) {
-                return contas.get(i).getSaldo();
-            }
-        }
-        System.out.println("Conta não encontrada.");
-        return -1.f;
+    public float retornaSaldo(Conta conta) {
+        return conta.getSaldo();
     }
 
     public String gerarExtrato() {
@@ -94,8 +81,9 @@ public class Cliente extends Usuario {
         return contas.get(contas.indexOf(this)).verificaNumeroDaConta(numeroDaConta);
     }
 
-    public void registraMovimentacao(String movimentacao) {
-        contas.get(contas.indexOf(this)).adicionarMovimentacao(movimentacao);
+    public void registraMovimentacao(String movimentacao, int numeroDaConta) {
+        Conta c = Persistence.buscarContaPorNumero(numeroDaConta);
+        c.adicionarMovimentacao(movimentacao);
     }
 
     public float getLimiteCredito() {

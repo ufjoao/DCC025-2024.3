@@ -92,11 +92,13 @@ public class Conta {
     public void deposito(float valor) {
         Validador.validarDeposito(valor);
         saldo += valor;
+        Persistence.salvarConta(this);
     }
 
-    void saque(float valor) {
+    public void saque(float valor) {
         Validador.validarSaque(valor, saldo);
         saldo -= valor;
+        Persistence.salvarConta(this);
     }
 
     public void transferir(Conta destino, float valor, int senha) {
