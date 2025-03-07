@@ -1,5 +1,6 @@
 package banco.view;
 
+import banco.exception.Validador;
 import banco.model.Gerente;
 import banco.persistence.Persistence;
 import javax.swing.*;
@@ -46,11 +47,29 @@ public class TelaCadastroGerente extends JFrame {
     }
 
     private void cadastrarGerente(ActionEvent e) {
-        String nome = campoNome.getText();
-        String cpf = campoCpf.getText();
-        String senha = new String(campoSenha.getPassword());
-
-        Gerente novoGerente = new Gerente(nome, cpf, Integer.parseInt(senha));
+        String nome = " ";
+        if(Validador.nomeValido(campoNome.getText()))
+            nome = campoNome.getText();
+        else
+            JOptionPane.showMessageDialog(this, "Nome inválido!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
+        
+        String cpf = " ";
+        if(Validador.cpfValido(campoCpf.getText())){
+            cpf = campoCpf.getText(); 
+        }                       
+        else
+            JOptionPane.showMessageDialog(this, "CPF inválido!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
+        
+       
+        char[] senha = null;
+        
+        if(Validador.senhaValida(campoSenha.getPassword())) 
+            senha = (campoSenha.getPassword());
+        else
+            JOptionPane.showMessageDialog(this, "Senha inválida!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
+        
+        String senhaStr = new String(senha);
+        Gerente novoGerente = new Gerente(nome, cpf, Integer.parseInt(senhaStr));
         Persistence.addGerente(novoGerente);
 
         JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso!");

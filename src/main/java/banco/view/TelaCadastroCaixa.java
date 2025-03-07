@@ -1,5 +1,6 @@
 package banco.view;
 
+import banco.exception.Validador;
 import banco.model.Caixa;
 import banco.persistence.Persistence;
 import javax.swing.*;
@@ -44,12 +45,31 @@ public class TelaCadastroCaixa extends JFrame {
         setVisible(true);
     }
 
-    private void cadastrarCaixa(ActionEvent e) {
-        String nome = campoNome.getText();
-        String cpf = campoCpf.getText();
-        String senha = new String(campoSenha.getPassword());
-
-        Caixa novoCaixa = new Caixa(nome, cpf, Integer.parseInt(senha));
+    private void cadastrarCaixa(ActionEvent e) 
+    {
+        String nome = " ";
+        if(Validador.nomeValido(campoNome.getText()))
+            nome = campoNome.getText();
+        else
+            JOptionPane.showMessageDialog(this, "Nome inválido!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
+        
+        String cpf = " ";
+        if(Validador.cpfValido(campoCpf.getText())){
+            cpf = campoCpf.getText(); 
+        }                       
+        else
+            JOptionPane.showMessageDialog(this, "CPF inválido!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
+        
+       
+        char[] senha = null;
+        
+        if(Validador.senhaValida(campoSenha.getPassword())) 
+            senha = (campoSenha.getPassword());
+        else
+            JOptionPane.showMessageDialog(this, "Senha inválida!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
+        
+        String senhaStr = new String(senha);
+        Caixa novoCaixa = new Caixa(nome, cpf, Integer.parseInt(senhaStr));
         Persistence.addCaixa(novoCaixa);
 
         JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso!");

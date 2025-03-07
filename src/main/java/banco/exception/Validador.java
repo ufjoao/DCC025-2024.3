@@ -11,28 +11,50 @@ import java.util.ArrayList;
  *
  * @author joao
  */
-public class Validador {
-
+public class Validador 
+{
+    public static boolean nomeValido(String nome)
+    {
+        if(nome==null || nome.length()<2)
+            return false;
+        if(nome.matches(".*\\d.*"))
+            return false;
+        if(!nome.matches("^[a-zA-ZÀ-ÿ\\s]+$"))
+            return false;
+        if(temRepeticaoConsecutiva(nome))
+            return false;
+        
+        return true;
+    }
+    
     // Validação do nome
-    public static void validarNome(String nome) {
-        if (nome == null || nome.length() < 2) {
+    public static void validarNome(String nome) 
+    {
+        if (nome == null || nome.length() < 2) 
+        {
             throw new ValidacaoException("Nome deve ter pelo menos 2 caracteres.");
         }
-        if (nome.matches(".*\\d.*")) {
+        if (nome.matches(".*\\d.*")) 
+        {
             throw new ValidacaoException("Nome não pode conter números.");
         }
-        if (!nome.matches("^[a-zA-ZÀ-ÿ\\s]+$")) {
+        if (!nome.matches("^[a-zA-ZÀ-ÿ\\s]+$")) 
+        {
             throw new ValidacaoException("Nome não pode conter caracteres especiais (exceto acentuação).");
         }
-        if (temRepeticaoConsecutiva(nome)) {
+        if (temRepeticaoConsecutiva(nome)) 
+        {
             throw new ValidacaoException("Nome não pode ter 3 ou mais caracteres repetidos consecutivos.");
         }
     }
 
     // Verifica se o nome contém 3 ou mais caracteres repetidos consecutivos
-    private static boolean temRepeticaoConsecutiva(String nome) {
-        for (int i = 0; i < nome.length() - 2; i++) {
-            if (nome.charAt(i) == nome.charAt(i + 1) && nome.charAt(i + 1) == nome.charAt(i + 2)) {
+    private static boolean temRepeticaoConsecutiva(String nome) 
+    {
+        for (int i = 0; i < nome.length() - 2; i++) 
+        {
+            if (nome.charAt(i) == nome.charAt(i + 1) && nome.charAt(i + 1) == nome.charAt(i + 2)) 
+            {
                 return true;
             }
         }
@@ -40,13 +62,16 @@ public class Validador {
     }
 
     // Função para validar o CPF completo
-    public static boolean cpfValido(String cpf) {
+    public static boolean cpfValido(String cpf) 
+    {
         // Verifica se todos os dígitos do CPF são iguais
-        if (cpf.matches("(\\d)\\1{10}")) {
+        if (cpf.matches("(\\d)\\1{10}")) 
+        {
             return false;
         }
         
-        if (cpf.length() != 11) {
+        if (cpf.length() != 11) 
+        {
             return false;
         }
 
@@ -90,6 +115,21 @@ public class Validador {
         return false;
     }
 
+    
+    public static boolean senhaValida(char[] senha)
+{
+    // Corrigindo a conversão do array de char para String
+    String senhaStr = new String(senha);
+    
+    if(senhaStr.length() != 6)
+        return false;
+    if(temSequencia(senhaStr))
+        return false;
+    
+    return true;
+}
+
+    
 // Validação da senha (como inteiro)
     public static void validarSenha(int senha) {
         // Convertendo a senha e o número da conta para String para facilitar as comparações
@@ -106,6 +146,17 @@ public class Validador {
         }
     }
 
+    public static boolean numeroContaValido(int senha)
+    {
+        String senhaStr = String.format("%06d", senha);
+        if(senhaStr.length() != 6)
+            return false;
+        if(temSequencia(senhaStr))
+            return false;
+        
+        return true;
+    }
+    
 // Validação do número da conta (como inteiro)
     public static void validarNumeroConta(int senha) {
         // Convertendo a senha e o número da conta para String para facilitar as comparações

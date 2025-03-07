@@ -59,13 +59,32 @@ public class TelaCadastroCliente extends JFrame {
         }                       
         else
             JOptionPane.showMessageDialog(this, "CPF inválido!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
-        String nome = campoNome.getText();
         
-        String senha = new String(campoSenha.getPassword());
-        int numeroDaConta = Integer.parseInt(campoNumeroConta.getText());
+        
+        String nome = " ";
+        if(Validador.nomeValido(campoNome.getText()))
+            nome = campoNome.getText();
+        else
+            JOptionPane.showMessageDialog(this, "Nome inválido!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
+        
+        char[] senha = null;
+        
+        if(Validador.senhaValida(campoSenha.getPassword())) 
+            senha = (campoSenha.getPassword());
+        else
+            JOptionPane.showMessageDialog(this, "Senha inválida!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
+        
+        
+        int numeroDaConta = 0;
+        int numeroDaContaAux = Integer.parseInt(campoNumeroConta.getText());
+        if(Validador.numeroContaValido(numeroDaContaAux))
+            numeroDaConta = numeroDaContaAux;
+        else
+            JOptionPane.showMessageDialog(this, "Número da conta inválido!", "Erro de Login", JOptionPane.ERROR_MESSAGE);
 
         // Criar o novo cliente
-        Cliente novoCliente = new Cliente(nome, cpf, Integer.parseInt(senha));
+        String senhaStr = new String(senha);
+        Cliente novoCliente = new Cliente(nome, cpf, Integer.parseInt(senhaStr));
 
         // Criar e vincular a conta ao cliente
         novoCliente.criarConta(numeroDaConta);
