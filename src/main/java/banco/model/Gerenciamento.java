@@ -79,29 +79,32 @@ public class Gerenciamento {
             return;
         }
 
-//        if (clienteOrigem.getSenha() != senha) {
-//            throw new SecurityException("Senha incorreta.");
-//        }
         if (contaOrigem.getSaldo() >= valor) {
             contaOrigem.saque(valor);
             contaDestino.deposito(valor);
-//            clienteOrigem.registraMovimentacao("Transferência Enviada: R$ " + valor + " para " + clienteDestino.getNome(), numeroDaContaOrigem);
-//            clienteDestino.registraMovimentacao("Transferência Recebida: R$ " + valor + " de " + clienteOrigem.getNome(), numeroDaContaDestino);
+
+            Cliente clienteOrigem = Persistence.buscarClientePorId(contaOrigem.getClienteId());
+            Cliente clienteDestino = Persistence.buscarClientePorId(contaDestino.getClienteId());
+
+            Movimentacao movOrigem = new Movimentacao("Transferência enviada para " + clienteDestino.getNome(), valor);
+            Movimentacao movDestino = new Movimentacao("Transferência recebida de " + clienteOrigem.getNome(), valor);
+
+            clienteOrigem.adicionarMovimentacao(movOrigem);
+            clienteDestino.adicionarMovimentacao(movDestino);
+
+            // Salvar primeiro os clientes (com suas movimentações)
+            Persistence.salvarCliente(clienteOrigem);
+            Persistence.salvarCliente(clienteDestino);
+
+            // Depois salvar as contas
             Persistence.salvarConta(contaOrigem);
             Persistence.salvarConta(contaDestino);
+
+            clienteOrigem = Persistence.buscarClientePorId(contaOrigem.getClienteId());
+            clienteDestino = Persistence.buscarClientePorId(contaDestino.getClienteId());
         } else {
             JOptionPane.showMessageDialog(null, "Transferência não realizada! Saldo insuficiente.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private int encontrarConta(int numeroConta) {
-        for (int i = 0; i < clientes.size(); i++) {
-            if (clientes.get(i).verificaNumeroDaConta(numeroConta)) {
-                //retorna o indice que armazena o cliente que é dono daquela conta em especifico
-                return i;
-            }
-        }
-        return -1; //Retorna -1 caso a conta não seja encontrada
     }
 
     // Método para realizar um saque
@@ -119,7 +122,6 @@ public class Gerenciamento {
         throw new IllegalArgumentException("Conta não encontrada para saque.");
     }
 
-
     public void realizarDeposito(Cliente cliente, float valor, int numeroConta) {
         for (Conta conta : cliente.getContas()) {
             if (conta.getNumeroDaConta() == numeroConta) {
@@ -133,7 +135,6 @@ public class Gerenciamento {
         }
         throw new IllegalArgumentException("Conta não encontrada para depósito.");
     }
-
 
     public List<Cliente> getClientes() {
         clientes = Persistence.carregarClientes();

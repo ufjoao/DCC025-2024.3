@@ -82,56 +82,45 @@ public class TelaUsuario extends JFrame {
         JOptionPane.showMessageDialog(this, "Saldo Atualizado: R$ " + saldoAtualizado);
     }
 
-    private void consultarExtrato(Cliente cliente) 
-    {
+    private void consultarExtrato(Cliente cliente) {
+        cliente = Persistence.buscarClientePorId(cliente.getId());
         String extrato = cliente.gerarExtrato();
+        Persistence.salvarCliente(cliente);
         JOptionPane.showMessageDialog(this, extrato, "Extrato", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public void realizarDeposito(Cliente cliente, int id) 
-{
-    Conta contaAtual = Persistence.buscarContaPorNumero(id);
-    if (contaAtual == null) 
-    {
-        JOptionPane.showMessageDialog(this, "Conta não encontrada!");
-        return;
-    }
-    
-    String valorStr = JOptionPane.showInputDialog("Digite o valor do depósito:");
-    if (valorStr != null) {
-        try {
-            // Converte o valor para float apenas uma vez
-            float valor = Float.parseFloat(valorStr);
+    public void realizarDeposito(Cliente cliente, int id) {
+        Conta contaAtual = Persistence.buscarContaPorNumero(id);
+        cliente = Persistence.buscarClientePorId(cliente.getId());
+        if (contaAtual == null) {
+            JOptionPane.showMessageDialog(this, "Conta não encontrada!");
+            return;
+        }
 
-            // Verifica se o valor é válido
-            if (valor <= 0) 
-            {
-                JOptionPane.showMessageDialog(this, "O valor do depósito deve ser positivo!");
-                return;
+        String valorStr = JOptionPane.showInputDialog("Digite o valor do depósito:");
+        if (valorStr != null) {
+            try {
+                // Converte o valor para float apenas uma vez
+                float valor = Float.parseFloat(valorStr);
+
+                // Verifica se o valor é válido
+                if (valor <= 0) {
+                    JOptionPane.showMessageDialog(this, "O valor do depósito deve ser positivo!");
+                    return;
+                }
+                gerenciamento.realizarDeposito(cliente, valor, id);
+                Persistence.salvarCliente(cliente);
+                JOptionPane.showMessageDialog(this, "Depósito realizado com sucesso!");
+            } catch (NumberFormatException e) {
+                // Caso o valor seja inválido, mostra a mensagem de erro
+                JOptionPane.showMessageDialog(this, "Valor inválido!");
             }
-
-            // Adiciona a movimentação de depósito
-            cliente.registrarMovimentacao("Depósito", valor);
-
-            // Realiza o depósito
-            gerenciamento.realizarDeposito(cliente, valor, id);
-
-            // Atualiza os dados do cliente no Persistence
-            Persistence.salvarCliente(cliente);
-
-            // Confirma o depósito com uma mensagem
-            JOptionPane.showMessageDialog(this, "Depósito realizado com sucesso!");
-        } catch (NumberFormatException e) {
-            // Caso o valor seja inválido, mostra a mensagem de erro
-            JOptionPane.showMessageDialog(this, "Valor inválido!");
         }
     }
-}
-
-
 
     private void realizarSaque(Cliente cliente, int numeroDaConta) {
         Conta conta = Persistence.buscarContaPorNumero(numeroDaConta);
+        cliente = Persistence.buscarClientePorId(cliente.getId());
         String valorStr = JOptionPane.showInputDialog("Digite o valor do saque:");
         if (valorStr != null) {
             try {
@@ -172,19 +161,14 @@ public class TelaUsuario extends JFrame {
         if (destinoStr != null && valorStr != null) {
             int destino = Integer.parseInt(destinoStr);
             float valor = Float.parseFloat(valorStr);
-            if(valor > 0){
+            if (valor > 0) {
                 Conta contaDestino = Persistence.buscarContaPorNumero(destino);
                 if (conta == null || contaDestino == null) {
                     JOptionPane.showMessageDialog(this, "Conta não encontrada!");
                     return;
                 }
-                float saldoAT = conta.getSaldo();
                 gerenciamento.realizarTransferencia(numeroDaConta, valor, destino);
-                if(saldoAT == (saldoAT - valor)){
-                    JOptionPane.showMessageDialog(this, "Transferência realizada com sucesso!");
-                }
-                else
-                    JOptionPane.showMessageDialog(this, "Transferência não realizada");
+                JOptionPane.showMessageDialog(this, "Transferência realizada com sucesso!");
             }
         }
     }

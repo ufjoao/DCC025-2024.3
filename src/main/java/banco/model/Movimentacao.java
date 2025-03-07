@@ -12,7 +12,7 @@ public class Movimentacao {
         this.descricao = descricao;
         this.valor = valor;
     }
-
+    
     public String getDescricao() {
         return descricao;
     }

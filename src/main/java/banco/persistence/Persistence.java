@@ -35,11 +35,12 @@ public class Persistence {
         // Salva os dados atualizados no arquivo
         salvarClientes(clientes);
     }
+    
 
     // Salva os clientes no arquivo JSON
     public static void salvarClientes(List<Cliente> clientes) {
-        try (FileWriter writer = new FileWriter("clientes.json")) {
-            Gson gson = new Gson();
+        try (FileWriter writer = new FileWriter(ARQUIVO_CLIENTES)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create(); // Para JSON formatado
             gson.toJson(clientes, writer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,33 +48,26 @@ public class Persistence {
     }
 
     public static void salvarCliente(Cliente cliente) {
-        // Carregar todos os clientes
         List<Cliente> clientes = carregarClientes();
-
-        // Encontrar o cliente pelo ID e atualizar
         for (int i = 0; i < clientes.size(); i++) {
             if (clientes.get(i).getId() == cliente.getId()) {
-                // Atualiza o cliente na lista
                 clientes.set(i, cliente);
-
-                // Salva os clientes atualizados no arquivo
                 salvarClientes(clientes);
-                return; // Retorna após salvar o cliente
+                return;
             }
         }
-
-        // Se o cliente não for encontrado, podemos adicionar um novo
         clientes.add(cliente);
-        salvarClientes(clientes); // Salva os dados no arquivo
+        salvarClientes(clientes);
     }
 
     // Carrega os clientes do arquivo JSON
     public static List<Cliente> carregarClientes() {
-        try (FileReader reader = new FileReader("clientes.json")) {
+        try (FileReader reader = new FileReader(ARQUIVO_CLIENTES)) {
             Gson gson = new Gson();
-            Type tipoListaClientes = new TypeToken<List<Cliente>>() {
-            }.getType();
-            return gson.fromJson(reader, tipoListaClientes);
+            Type listType = new TypeToken<List<Cliente>>() {}.getType();
+            return gson.fromJson(reader, listType);
+        } catch (FileNotFoundException e) {
+            return new ArrayList<>(); // Retorna lista vazia se o arquivo não existir
         } catch (IOException e) {
             e.printStackTrace();
             return new ArrayList<>();
@@ -187,23 +181,13 @@ public class Persistence {
     }
 
     public static Cliente buscarClientePorId(int id) {
-        Gson gson = new Gson();
-
-        try (FileReader reader = new FileReader("clientes.json")) {
-            Type listType = new TypeToken<List<Cliente>>() {
-            }.getType();
-            List<Cliente> clientes = gson.fromJson(reader, listType);
-
-            for (Cliente cliente : clientes) {
-                if (cliente.getId() == id) {
-                    return cliente;
-                }
+        List<Cliente> clientes = carregarClientes();
+        for (Cliente cliente : clientes) {
+            if (cliente.getId() == id) {
+                return cliente;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
-        return null; // Retorna null se não encontrar o cliente
+        return null;
     }
 
     public static Caixa buscarCaixaPorId(int id) {
@@ -255,6 +239,6 @@ public class Persistence {
                 }
             }
         }
-        throw new NoSuchElementException("Conta com número " + numeroConta + " não encontrada.");
+        return null;
     }
 }

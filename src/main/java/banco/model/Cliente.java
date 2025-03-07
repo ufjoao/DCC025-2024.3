@@ -12,6 +12,7 @@ public class Cliente extends Usuario {
     @Expose
     private float limiteCredito = 0f;
     private List<Movimentacao> movimentacoes;
+
     public Cliente(String nome, String cpf, int senha) {
         super(nome, cpf, senha);
         this.contas = new ArrayList<>();
@@ -68,7 +69,6 @@ public class Cliente extends Usuario {
         return conta.getSaldo();
     }
 
-    
     public String gerarExtrato() {
         StringBuilder extratoCompleto = new StringBuilder("Extrato do Cliente:\n\n");
 
@@ -99,9 +99,11 @@ public class Cliente extends Usuario {
     public void adicionarLimiteCredito(float valor) {
         this.limiteCredito += valor;
     }
-    
-        public void adicionarMovimentacao(Movimentacao movimentacao) {
-        movimentacoes.add(movimentacao);
-    }
 
+    public void adicionarMovimentacao(Movimentacao movimentacao) {
+        if (this.movimentacoes == null) {
+            this.movimentacoes = new ArrayList<>();
+        }
+        this.movimentacoes.add(movimentacao);
+    }
 }
