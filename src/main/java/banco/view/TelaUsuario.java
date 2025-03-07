@@ -82,45 +82,53 @@ public class TelaUsuario extends JFrame {
         JOptionPane.showMessageDialog(this, "Saldo Atualizado: R$ " + saldoAtualizado);
     }
 
-    private void consultarExtrato(Cliente cliente) {
+    private void consultarExtrato(Cliente cliente) 
+    {
         String extrato = cliente.gerarExtrato();
         JOptionPane.showMessageDialog(this, extrato, "Extrato", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void realizarDeposito(Cliente cliente, int id) {
-        String valorStr = JOptionPane.showInputDialog("Digite o valor do depósito:");
-        if (valorStr != null) {
-            try {
-                float valor = Float.parseFloat(valorStr);
-                if (valor <= 0) {
-                    JOptionPane.showMessageDialog(this, "O valor do depósito deve ser positivo!");
-                    return;
-                }
+    public void realizarDeposito(Cliente cliente, int id) 
+{
+    Conta contaAtual = Persistence.buscarContaPorNumero(id);
+    if (contaAtual == null) 
+    {
+        JOptionPane.showMessageDialog(this, "Conta não encontrada!");
+        return;
+    }
+    
+    String valorStr = JOptionPane.showInputDialog("Digite o valor do depósito:");
+    if (valorStr != null) {
+        try {
+            // Converte o valor para float apenas uma vez
+            float valor = Float.parseFloat(valorStr);
 
-                // Busca a conta atualizada
-                Conta contaAtual = Persistence.buscarContaPorNumero(id);
-                if (contaAtual == null) {
-                    JOptionPane.showMessageDialog(this, "Conta não encontrada!");
-                    return;
-                }
-
-                // Realiza o depósito
-                gerenciamento.realizarDeposito(cliente, valor, id);
-
-                // Atualiza os dados do cliente e salva no JSON
-                Persistence.salvarCliente(cliente);
-
-                // Atualiza os dados carregados na interface
-                cliente = Persistence.buscarClientePorId(cliente.getId());
-
-                // Exibe a confirmação do depósito
-                JOptionPane.showMessageDialog(this, "Depósito realizado com sucesso!");
-
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Valor inválido!");
+            // Verifica se o valor é válido
+            if (valor <= 0) 
+            {
+                JOptionPane.showMessageDialog(this, "O valor do depósito deve ser positivo!");
+                return;
             }
+
+            // Adiciona a movimentação de depósito
+            cliente.registrarMovimentacao("Depósito", valor);
+
+            // Realiza o depósito
+            gerenciamento.realizarDeposito(cliente, valor, id);
+
+            // Atualiza os dados do cliente no Persistence
+            Persistence.salvarCliente(cliente);
+
+            // Confirma o depósito com uma mensagem
+            JOptionPane.showMessageDialog(this, "Depósito realizado com sucesso!");
+        } catch (NumberFormatException e) {
+            // Caso o valor seja inválido, mostra a mensagem de erro
+            JOptionPane.showMessageDialog(this, "Valor inválido!");
         }
     }
+}
+
+
 
     private void realizarSaque(Cliente cliente, int numeroDaConta) {
         Conta conta = Persistence.buscarContaPorNumero(numeroDaConta);

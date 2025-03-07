@@ -11,7 +11,7 @@ public class Cliente extends Usuario {
     private List<Conta> contas;
     @Expose
     private float limiteCredito = 0f;
-
+    private List<Movimentacao> movimentacoes;
     public Cliente(String nome, String cpf, int senha) {
         super(nome, cpf, senha);
         this.contas = new ArrayList<>();
@@ -20,6 +20,7 @@ public class Cliente extends Usuario {
     public Cliente() {
         super("", "", 0); // Valor padrão para inicializar
         this.contas = new ArrayList<>();
+        this.movimentacoes = new ArrayList<>();
     }
 
     @Override
@@ -67,11 +68,16 @@ public class Cliente extends Usuario {
         return conta.getSaldo();
     }
 
+    
     public String gerarExtrato() {
         StringBuilder extratoCompleto = new StringBuilder("Extrato do Cliente:\n\n");
 
-        for (Conta conta : contas) {
-            extratoCompleto.append(conta.gerarExtrato()).append("\n------------------\n");
+        if (movimentacoes.isEmpty()) {
+            return "Conta sem movimentações.";
+        }
+
+        for (Movimentacao movimentacao : movimentacoes) {
+            extratoCompleto.append(movimentacao).append("\n");
         }
 
         return extratoCompleto.toString();
@@ -81,9 +87,9 @@ public class Cliente extends Usuario {
         return contas.get(contas.indexOf(this)).verificaNumeroDaConta(numeroDaConta);
     }
 
-    public void registraMovimentacao(String movimentacao, int numeroDaConta) {
-        Conta c = Persistence.buscarContaPorNumero(numeroDaConta);
-        c.adicionarMovimentacao(movimentacao);
+    public void registrarMovimentacao(String descricao, float valor) {
+        Movimentacao movimentacao = new Movimentacao(descricao, valor);
+        movimentacoes.add(movimentacao);
     }
 
     public float getLimiteCredito() {
@@ -93,4 +99,9 @@ public class Cliente extends Usuario {
     public void adicionarLimiteCredito(float valor) {
         this.limiteCredito += valor;
     }
+    
+        public void adicionarMovimentacao(Movimentacao movimentacao) {
+        movimentacoes.add(movimentacao);
+    }
+
 }

@@ -110,22 +110,30 @@ public class Gerenciamento {
             if (conta.getNumeroDaConta() == numeroDaConta) {
                 conta.saque(valor); // Método já deve atualizar o saldo
                 Persistence.salvarConta(conta); // Salvar apenas a conta
+
+                // Registrar a movimentação do saque
+                cliente.adicionarMovimentacao(new Movimentacao("Saque", valor)); // Adiciona ao ArrayList de movimentações
                 return;
             }
         }
-        throw new IllegalArgumentException("Conta não encontrada para depósito.");
+        throw new IllegalArgumentException("Conta não encontrada para saque.");
     }
+
 
     public void realizarDeposito(Cliente cliente, float valor, int numeroConta) {
         for (Conta conta : cliente.getContas()) {
             if (conta.getNumeroDaConta() == numeroConta) {
                 conta.deposito(valor); // Método já deve atualizar o saldo
                 Persistence.salvarConta(conta); // Salvar apenas a conta
+
+                // Registrar a movimentação do depósito
+                cliente.adicionarMovimentacao(new Movimentacao("Depósito", valor)); // Adiciona ao ArrayList de movimentações
                 return;
             }
         }
         throw new IllegalArgumentException("Conta não encontrada para depósito.");
     }
+
 
     public List<Cliente> getClientes() {
         clientes = Persistence.carregarClientes();
