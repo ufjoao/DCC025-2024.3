@@ -4,7 +4,10 @@
  */
 package banco.model;
 
-public class Movimentacao {
+import java.io.Serializable;
+
+public class Movimentacao implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String descricao;
     private float valor;
 

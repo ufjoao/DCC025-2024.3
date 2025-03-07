@@ -5,7 +5,10 @@ import com.google.gson.annotations.Expose;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cliente extends Usuario {
+import java.io.Serializable;
+
+public class Cliente extends Usuario implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Expose
     private List<Conta> contas;

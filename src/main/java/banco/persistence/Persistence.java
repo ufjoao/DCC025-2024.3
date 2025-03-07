@@ -6,6 +6,11 @@ import com.google.gson.reflect.TypeToken;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.util.List;
 
 public class Persistence {
 
@@ -14,6 +19,86 @@ public class Persistence {
     private static final String ARQUIVO_GERENTES = "gerentes.json";
 
     // Método para adicionar ou atualizar um cliente
+    public static List<Solicitacao> solicitacoes = new ArrayList<>();
+
+    // Método para adicionar uma solicitação
+    public static void adicionarSolicitacao(Solicitacao solicitacao) {
+        solicitacoes.add(solicitacao);
+        salvarSolicitacoesJson(); // Salva a lista atualizada no arquivo
+    }
+
+    public static void verificarSolicitacoes() {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("solicitacoes.dat"))) {
+            List<Solicitacao> solicitacoesCarregadas = (List<Solicitacao>) in.readObject();
+            for (Solicitacao solicitacao : solicitacoesCarregadas) {
+                System.out.println(solicitacao);
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void verificarConteudoArquivo() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("solicitacoes.dat"))) {
+            List<Solicitacao> solicitacoes = (List<Solicitacao>) ois.readObject();
+            // Verifica o que está sendo carregado
+            for (Solicitacao solicitacao : solicitacoes) {
+                System.out.println(solicitacao);  // Imprime as solicitações no console
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exibirSolicitacoesPendentes() {
+        carregarSolicitacoesJson();  // Carrega as solicitações antes de exibir
+        // Exibe as solicitações na interface
+    }
+
+    // Método para buscar uma solicitação de um tipo específico (Saque ou Depósito)
+    public static Solicitacao buscarSolicitacaoPorTipo(String tipo) {
+        for (Solicitacao solicitacao : solicitacoes) {
+            if (solicitacao.getTipo().equalsIgnoreCase(tipo) && !solicitacao.isAprovado()) {
+                return solicitacao;
+            }
+        }
+        return null; // Caso não encontre uma solicitação pendente
+    }
+
+// Método para salvar solicitações em um arquivo JSON
+    public static void salvarSolicitacoesJson() {
+        try (Writer writer = new FileWriter("solicitacoes.json")) {
+            Gson gson = new Gson();
+            gson.toJson(solicitacoes, writer);  // Converte a lista para JSON e escreve no arquivo
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Método para zerar todas as solicitações
+    public static void zerarSolicitacoes() {
+        solicitacoes.clear(); // Limpa a lista de solicitações
+        salvarSolicitacoesJson(); // Salva o estado vazio no arquivo
+        System.out.println("Todas as solicitações foram removidas.");
+    }
+
+    // Método para carregar as solicitações a partir do arquivo
+// Método para carregar solicitações a partir de um arquivo JSON
+    public static void carregarSolicitacoesJson() {
+        try (Reader reader = new FileReader("solicitacoes.json")) {
+            Gson gson = new Gson();
+            Type solicitacaoListType = new TypeToken<List<Solicitacao>>() {
+            }.getType();
+            solicitacoes = gson.fromJson(reader, solicitacaoListType);  // Carrega as solicitações do arquivo JSON
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Solicitacao> obterSolicitacoesPendentes() {
+        return solicitacoes; // ou algum método de recuperação de dados da persistência
+    }
+
     public static void addCliente(Cliente cliente) {
         List<Cliente> clientes = carregarClientes();
 
@@ -35,7 +120,6 @@ public class Persistence {
         // Salva os dados atualizados no arquivo
         salvarClientes(clientes);
     }
-    
 
     // Salva os clientes no arquivo JSON
     public static void salvarClientes(List<Cliente> clientes) {
@@ -64,7 +148,8 @@ public class Persistence {
     public static List<Cliente> carregarClientes() {
         try (FileReader reader = new FileReader(ARQUIVO_CLIENTES)) {
             Gson gson = new Gson();
-            Type listType = new TypeToken<List<Cliente>>() {}.getType();
+            Type listType = new TypeToken<List<Cliente>>() {
+            }.getType();
             return gson.fromJson(reader, listType);
         } catch (FileNotFoundException e) {
             return new ArrayList<>(); // Retorna lista vazia se o arquivo não existir

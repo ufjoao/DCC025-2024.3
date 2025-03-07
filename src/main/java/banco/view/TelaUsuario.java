@@ -1,3 +1,4 @@
+
 package banco.view;
 
 import banco.model.Caixa;
@@ -5,10 +6,12 @@ import banco.model.Cliente;
 import banco.model.Conta;
 import banco.model.Gerenciamento;
 import banco.model.Gerente;
+import banco.model.Solicitacao;
 import banco.persistence.Persistence;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+
 
 public class TelaUsuario extends JFrame {
 
@@ -43,14 +46,15 @@ public class TelaUsuario extends JFrame {
                 Cliente atual = contaAtual.getDono();
                 adicionarBotao(painelAcoes, "Consultar Saldo", e -> consultarSaldo(atual, contaAtual));
                 adicionarBotao(painelAcoes, "Extrato", e -> consultarExtrato(atual));
-                adicionarBotao(painelAcoes, "Depositar", e -> realizarDeposito(atual, id));
-                adicionarBotao(painelAcoes, "Sacar", e -> realizarSaque(atual, id));
+                adicionarBotao(painelAcoes, "Solicitar Depósito", e -> solicitarDeposito(atual, id));
+                adicionarBotao(painelAcoes, "Solicitar Saque", e -> solicitarSaque(atual, id));
                 adicionarBotao(painelAcoes, "Transferir", e -> realizarTransferencia(atual, id));
             }
             case "Caixa" -> {
+                Persistence.carregarSolicitacoesJson();
                 Caixa atual = Persistence.buscarCaixaPorId(id);
-                adicionarBotao(painelAcoes, "Depósitos", e -> JOptionPane.showMessageDialog(this, "Função de depósito."));
-                adicionarBotao(painelAcoes, "Saques", e -> JOptionPane.showMessageDialog(this, "Função de saque."));
+                adicionarBotao(painelAcoes, "Aprovar Depósitos", e -> aprovarDepositos());
+                adicionarBotao(painelAcoes, "Aprovar Saques", e -> aprovarSaques());
                 adicionarBotao(painelAcoes, "Transferências", e -> JOptionPane.showMessageDialog(this, "Função de transferência."));
             }
             case "Gerente" -> {
@@ -71,18 +75,185 @@ public class TelaUsuario extends JFrame {
         botao.addActionListener(acao);
         painel.add(botao);
     }
+    
+    private void solicitarDeposito(Cliente cliente, int id) {
+        // Solicita a senha e cria a solicitação de depósito
+        JPasswordField senhaField = new JPasswordField(20);
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Digite a senha:"));
+        panel.add(senhaField);
+
+        int option = JOptionPane.showConfirmDialog(this, panel, "Autenticação", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (option != JOptionPane.OK_OPTION) {
+            JOptionPane.showMessageDialog(this, "Operação cancelada.");
+            return;
+        }
+
+        int senhaDigitada = Integer.parseInt(new String(senhaField.getPassword()));  // A senha é do tipo int
+        if (senhaDigitada != cliente.getSenha()) {
+            JOptionPane.showMessageDialog(this, "Senha incorreta!");
+            return;
+        }
+
+        Conta contaAtual = Persistence.buscarContaPorNumero(id);
+        if (contaAtual == null) {
+            JOptionPane.showMessageDialog(this, "Conta não encontrada!");
+            return;
+        }
+
+        String valorStr = JOptionPane.showInputDialog("Digite o valor do depósito:");
+        if (valorStr != null) {
+            try {
+                float valor = Float.parseFloat(valorStr);
+                if (valor <= 0) {
+                    JOptionPane.showMessageDialog(this, "O valor do depósito deve ser positivo!");
+                    return;
+                }
+
+                Solicitacao solicitacao = new Solicitacao("Deposito",valor , contaAtual, cliente);
+                Persistence.adicionarSolicitacao(solicitacao); // Salva a solicitação
+                JOptionPane.showMessageDialog(this, "Solicitação de depósito realizada com sucesso!");
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Valor inválido!");
+            }
+        }
+    }
+
+    private void solicitarSaque(Cliente cliente, int id) {
+        // Solicita a senha e cria a solicitação de saque
+        JPasswordField senhaField = new JPasswordField(20);
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Digite a senha:"));
+        panel.add(senhaField);
+
+        int option = JOptionPane.showConfirmDialog(this, panel, "Autenticação", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (option != JOptionPane.OK_OPTION) {
+            JOptionPane.showMessageDialog(this, "Operação cancelada.");
+            return;
+        }
+
+        int senhaDigitada = Integer.parseInt(new String(senhaField.getPassword()));  // A senha é do tipo int
+        if (senhaDigitada != cliente.getSenha()) {
+            JOptionPane.showMessageDialog(this, "Senha incorreta!");
+            return;
+        }
+
+        Conta contaAtual = Persistence.buscarContaPorNumero(id);
+        if (contaAtual == null) {
+            JOptionPane.showMessageDialog(this, "Conta não encontrada!");
+            return;
+        }
+
+        String valorStr = JOptionPane.showInputDialog("Digite o valor do saque:");
+        if (valorStr != null) {
+            try {
+                float valor = Float.parseFloat(valorStr);
+                if (valor <= 0) {
+                    JOptionPane.showMessageDialog(this, "O valor do saque deve ser positivo!");
+                    return;
+                }
+
+                Solicitacao solicitacao = new Solicitacao("Saque",valor , contaAtual, cliente);
+                Persistence.adicionarSolicitacao(solicitacao); // Salva a solicitação
+                JOptionPane.showMessageDialog(this, "Solicitação de saque realizada com sucesso!");
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Valor inválido!");
+            }
+        }
+    }
+
+    private void aprovarDepositos() {
+        // Função para o caixa aprovar os depósitos
+Solicitacao solicitacao = Persistence.buscarSolicitacaoPorTipo("Deposito");
+if (solicitacao != null) {
+    try {
+        int senhaDigitada = Integer.parseInt(JOptionPane.showInputDialog("Digite a senha do cliente para aprovação:"));
+        if (senhaDigitada == solicitacao.getCliente().getSenha()) {
+            solicitacao.aprovar();
+            Persistence.salvarConta(solicitacao.getConta());
+            JOptionPane.showMessageDialog(this, "Depósito aprovado com sucesso!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Senha incorreta!");
+        }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Por favor, digite um número válido para a senha.");
+    }
+}
+    }
+
+    private void aprovarSaques() {
+        // Função para o caixa aprovar os saques
+        Solicitacao solicitacao = Persistence.buscarSolicitacaoPorTipo("Saque");
+        if (solicitacao != null) {
+            int senhaDigitada = Integer.parseInt(JOptionPane.showInputDialog("Digite a senha do cliente para aprovação:"));
+            if (senhaDigitada == solicitacao.getCliente().getSenha()) {
+                solicitacao.aprovar();
+                Persistence.salvarConta(solicitacao.getConta());
+                JOptionPane.showMessageDialog(this, "Saque aprovado com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Senha incorreta!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Não há solicitações de saque.");
+        }
+    }
 
     private void consultarSaldo(Cliente cliente, Conta conta) {
+        // Cria um painel para pedir a senha
+        JPasswordField senhaField = new JPasswordField(20);
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Digite a senha:"));
+        panel.add(senhaField);
+
+        // Exibe o painel de senha
+        int option = JOptionPane.showConfirmDialog(this, panel, "Autenticação", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (option != JOptionPane.OK_OPTION) {
+            JOptionPane.showMessageDialog(this, "Operação cancelada.");
+            return;
+        }
+
+        // Verifica a senha do cliente
+        int senhaDigitada = Integer.parseInt(new String(senhaField.getPassword()));  // A senha é do tipo int, como você mencionou
+        if (senhaDigitada != cliente.getSenha()) {
+            JOptionPane.showMessageDialog(this, "Senha incorreta!");
+            return;
+        }
+
+        // Após a senha estar correta, continua com a lógica de consulta de saldo
         conta = Persistence.buscarContaPorNumero(conta.getNumeroDaConta());
         if (conta == null) {
             JOptionPane.showMessageDialog(this, "Conta não encontrada!");
             return;
         }
+
         float saldoAtualizado = conta.getSaldo(); // Método correto para obter saldo atualizado
         JOptionPane.showMessageDialog(this, "Saldo Atualizado: R$ " + saldoAtualizado);
     }
 
     private void consultarExtrato(Cliente cliente) {
+        // Cria um painel para pedir a senha
+        JPasswordField senhaField = new JPasswordField(20);
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Digite a senha:"));
+        panel.add(senhaField);
+
+        // Exibe o painel de senha
+        int option = JOptionPane.showConfirmDialog(this, panel, "Autenticação", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (option != JOptionPane.OK_OPTION) {
+            JOptionPane.showMessageDialog(this, "Operação cancelada.");
+            return;
+        }
+
+        // Verifica a senha do cliente
+        int senhaDigitada = Integer.parseInt(new String(senhaField.getPassword()));  // A senha é do tipo int, como você mencionou
+        if (senhaDigitada != cliente.getSenha()) {
+            JOptionPane.showMessageDialog(this, "Senha incorreta!");
+            return;
+        }
         cliente = Persistence.buscarClientePorId(cliente.getId());
         String extrato = cliente.gerarExtrato();
         Persistence.salvarCliente(cliente);
@@ -90,6 +261,26 @@ public class TelaUsuario extends JFrame {
     }
 
     public void realizarDeposito(Cliente cliente, int id) {
+        // Cria um painel para pedir a senha
+        JPasswordField senhaField = new JPasswordField(20);
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Digite a senha:"));
+        panel.add(senhaField);
+
+        // Exibe o painel de senha
+        int option = JOptionPane.showConfirmDialog(this, panel, "Autenticação", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (option != JOptionPane.OK_OPTION) {
+            JOptionPane.showMessageDialog(this, "Operação cancelada.");
+            return;
+        }
+
+        // Verifica a senha do cliente
+        int senhaDigitada = Integer.parseInt(new String(senhaField.getPassword()));  // A senha é do tipo int, como você mencionou
+        if (senhaDigitada != cliente.getSenha()) {
+            JOptionPane.showMessageDialog(this, "Senha incorreta!");
+            return;
+        }
         Conta contaAtual = Persistence.buscarContaPorNumero(id);
         cliente = Persistence.buscarClientePorId(cliente.getId());
         if (contaAtual == null) {
@@ -119,6 +310,26 @@ public class TelaUsuario extends JFrame {
     }
 
     private void realizarSaque(Cliente cliente, int numeroDaConta) {
+        // Cria um painel para pedir a senha
+        JPasswordField senhaField = new JPasswordField(20);
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Digite a senha:"));
+        panel.add(senhaField);
+
+        // Exibe o painel de senha
+        int option = JOptionPane.showConfirmDialog(this, panel, "Autenticação", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (option != JOptionPane.OK_OPTION) {
+            JOptionPane.showMessageDialog(this, "Operação cancelada.");
+            return;
+        }
+
+        // Verifica a senha do cliente
+        int senhaDigitada = Integer.parseInt(new String(senhaField.getPassword()));  // A senha é do tipo int, como você mencionou
+        if (senhaDigitada != cliente.getSenha()) {
+            JOptionPane.showMessageDialog(this, "Senha incorreta!");
+            return;
+        }
         Conta conta = Persistence.buscarContaPorNumero(numeroDaConta);
         cliente = Persistence.buscarClientePorId(cliente.getId());
         String valorStr = JOptionPane.showInputDialog("Digite o valor do saque:");
@@ -155,6 +366,26 @@ public class TelaUsuario extends JFrame {
     }
 
     private void realizarTransferencia(Cliente cliente, int numeroDaConta) {
+        // Cria um painel para pedir a senha
+        JPasswordField senhaField = new JPasswordField(20);
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Digite a senha:"));
+        panel.add(senhaField);
+
+        // Exibe o painel de senha
+        int option = JOptionPane.showConfirmDialog(this, panel, "Autenticação", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (option != JOptionPane.OK_OPTION) {
+            JOptionPane.showMessageDialog(this, "Operação cancelada.");
+            return;
+        }
+
+        // Verifica a senha do cliente
+        int senhaDigitada = Integer.parseInt(new String(senhaField.getPassword()));  // A senha é do tipo int, como você mencionou
+        if (senhaDigitada != cliente.getSenha()) {
+            JOptionPane.showMessageDialog(this, "Senha incorreta!");
+            return;
+        }
         Conta conta = Persistence.buscarContaPorNumero(numeroDaConta);
         String destinoStr = JOptionPane.showInputDialog("Digite o número da conta de destino:");
         String valorStr = JOptionPane.showInputDialog("Digite o valor da transferência:");

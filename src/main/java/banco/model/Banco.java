@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 public class Banco {
 
     public static void main(String[] args) {
+        
         SwingUtilities.invokeLater(() -> new TelaLogin());
 
 //        o teste deverá ser feito dentro da gerenciamento, já que realizarTransferencia agora recebe

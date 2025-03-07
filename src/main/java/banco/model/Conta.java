@@ -15,7 +15,10 @@ import java.util.ArrayList;
  *
  * @author rodri
  */
-public class Conta {
+import java.io.Serializable;
+
+public class Conta implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Expose
     private int numeroDaConta;
