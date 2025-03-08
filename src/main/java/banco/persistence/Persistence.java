@@ -26,10 +26,16 @@ public class Persistence {
     public static List<Solicitacao> solicitacoes = new ArrayList<>();
 
     // Método para adicionar uma solicitação
+//    public static void adicionarSolicitacao(Solicitacao solicitacao) {
+//        solicitacoes.add(solicitacao);
+//        salvarSolicitacoesJson(); // Salva a lista atualizada no arquivo
+//    }
+    
     public static void adicionarSolicitacao(Solicitacao solicitacao) {
-        solicitacoes.add(solicitacao);
-        salvarSolicitacoesJson(); // Salva a lista atualizada no arquivo
-    }
+    solicitacoes.add(solicitacao);  // Adiciona a nova solicitação à lista
+    salvarSolicitacoesJson();  // Salva a lista atualizada no arquivo JSON
+}
+
 
     public static void verificarSolicitacoes() {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("solicitacoes.dat"))) {
@@ -54,30 +60,43 @@ public class Persistence {
         }
     }
 
-    public void exibirSolicitacoesPendentes() {
-        carregarSolicitacoesJson();  // Carrega as solicitações antes de exibir
-        // Exibe as solicitações na interface
-    }
+//    public void exibirSolicitacoesPendentes() {
+//        carregarSolicitacoesJson();  // Carrega as solicitações antes de exibir
+//        // Exibe as solicitações na interface
+//    }
+    
 
     // Método para buscar uma solicitação de um tipo específico (Saque ou Depósito)
+    
     public static Solicitacao buscarSolicitacaoPorTipo(String tipo) {
-        for (Solicitacao solicitacao : solicitacoes) {
-            if (solicitacao.getTipo().equalsIgnoreCase(tipo) && !solicitacao.isAprovado()) {
-                return solicitacao;
-            }
+    for (Solicitacao solicitacao : solicitacoes) {
+        if (solicitacao.getTipo().equalsIgnoreCase(tipo) && !solicitacao.isAprovado()) {
+            return solicitacao;  // Retorna a primeira solicitação pendente encontrada
         }
-        return null; // Caso não encontre uma solicitação pendente
     }
+    return null;  // Caso não encontre uma solicitação pendente
+}
+
 
 // Método para salvar solicitações em um arquivo JSON
+//    public static void salvarSolicitacoesJson() {
+//        try (Writer writer = new FileWriter("solicitacoes.json")) {
+//            Gson gson = new Gson();
+//            gson.toJson(solicitacoes, writer);  // Converte a lista para JSON e escreve no arquivo
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    
     public static void salvarSolicitacoesJson() {
-        try (Writer writer = new FileWriter("solicitacoes.json")) {
-            Gson gson = new Gson();
-            gson.toJson(solicitacoes, writer);  // Converte a lista para JSON e escreve no arquivo
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    try (Writer writer = new FileWriter("solicitacoes.json")) {
+        Gson gson = new Gson();
+        gson.toJson(solicitacoes, writer);  // Converte a lista para JSON e escreve no arquivo
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
+
 
     // Método para zerar todas as solicitações
     public static void zerarSolicitacoes() {
@@ -88,16 +107,35 @@ public class Persistence {
 
     // Método para carregar as solicitações a partir do arquivo
 // Método para carregar solicitações a partir de um arquivo JSON
-    public static void carregarSolicitacoesJson() {
-        try (Reader reader = new FileReader("solicitacoes.json")) {
+//    public static void carregarSolicitacoesJson() {
+//        try (Reader reader = new FileReader("solicitacoes.json")) {
+//            Gson gson = new Gson();
+//            Type solicitacaoListType = new TypeToken<List<Solicitacao>>() {
+//            }.getType();
+//            solicitacoes = gson.fromJson(reader, solicitacaoListType);  // Carrega as solicitações do arquivo JSON
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    
+public static void carregarSolicitacoesJson() {
+    File arquivo = new File("solicitacoes.json");
+    if (arquivo.exists()) {
+        try (Reader reader = new FileReader(arquivo)) {
             Gson gson = new Gson();
-            Type solicitacaoListType = new TypeToken<List<Solicitacao>>() {
-            }.getType();
+            Type solicitacaoListType = new TypeToken<List<Solicitacao>>() {}.getType();
             solicitacoes = gson.fromJson(reader, solicitacaoListType);  // Carrega as solicitações do arquivo JSON
+            System.out.println("Solicitações carregadas: " + solicitacoes.size());  // Verifique se as solicitações estão sendo carregadas corretamente
         } catch (IOException e) {
             e.printStackTrace();
         }
+    } else {
+        solicitacoes = new ArrayList<>();  // Se o arquivo não existir, inicializa a lista vazia
+        System.out.println("Arquivo de solicitações não encontrado. Criando lista vazia.");
     }
+}
+
+
 
     public List<Solicitacao> obterSolicitacoesPendentes() {
         return solicitacoes; // ou algum método de recuperação de dados da persistência
@@ -243,25 +281,44 @@ public class Persistence {
         }
     }
 
+//    public static void salvarConta(Conta conta) {
+//        // Busca o cliente dono da conta
+//        Cliente dono = buscarClientePorId(conta.getDono().getId());
+//
+//        if (dono != null) {
+//            // Atualiza a conta dentro do cliente
+//            for (int i = 0; i < dono.getContas().size(); i++) {
+//                if (dono.getContas().get(i).getNumeroDaConta() == conta.getNumeroDaConta()) {
+//                    // Atualiza a conta no cliente
+//                    dono.getContas().set(i, conta);
+//                    // Salva o cliente com a conta modificada
+//                    salvarCliente(dono);  // Chama o método para reescrever os dados do cliente
+//                    return; // Retorna após salvar
+//                }
+//            }
+//        }
+//
+//        System.out.println("Conta ou cliente não encontrados.");
+//    }
+    
     public static void salvarConta(Conta conta) {
-        // Busca o cliente dono da conta
-        Cliente dono = buscarClientePorId(conta.getDono().getId());
+    // Busca o cliente dono da conta
+    Cliente dono = buscarClientePorId(conta.getDono().getId());
 
-        if (dono != null) {
-            // Atualiza a conta dentro do cliente
-            for (int i = 0; i < dono.getContas().size(); i++) {
-                if (dono.getContas().get(i).getNumeroDaConta() == conta.getNumeroDaConta()) {
-                    // Atualiza a conta no cliente
-                    dono.getContas().set(i, conta);
-                    // Salva o cliente com a conta modificada
-                    salvarCliente(dono);  // Chama o método para reescrever os dados do cliente
-                    return; // Retorna após salvar
-                }
+    if (dono != null) {
+        // Atualiza a conta dentro do cliente
+        for (int i = 0; i < dono.getContas().size(); i++) {
+            if (dono.getContas().get(i).getNumeroDaConta() == conta.getNumeroDaConta()) {
+                dono.getContas().set(i, conta);  // Atualiza a conta no cliente
+                salvarCliente(dono);  // Salva o cliente com a conta modificada
+                return;  // Retorna após salvar
             }
         }
-
-        System.out.println("Conta ou cliente não encontrados.");
     }
+
+    System.out.println("Conta ou cliente não encontrados.");
+}
+
 
     // Gera um ID aleatório para o usuário
     public static int gerarIdAleatorio() {

@@ -60,9 +60,20 @@ public class Solicitacao implements Serializable {
         this.aprovado = aprovado;
     }
 
+//    public void aprovar() {
+//        aprovado = true;
+//    }
+    
     public void aprovar() {
-        aprovado = true;
+    aprovado = true;  // Exemplo de alteração de status
+    // Atualizar o saldo da conta ou realizar alguma ação relevante
+    if (this.tipo.equals("Deposito")) {
+        conta.setSaldo(conta.getSaldo() + this.valor);
+    } else if (this.tipo.equals("Saque")) {
+        conta.setSaldo(conta.getSaldo() - this.valor);
     }
+}
+
 
     @Override
     public String toString() {

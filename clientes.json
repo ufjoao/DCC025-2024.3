@@ -327,7 +327,7 @@
     "contas": [
       {
         "numeroDaConta": 963852,
-        "saldo": 135.0,
+        "saldo": 530.0,
         "movimentacoes": [],
         "cliente": 931260
       }
@@ -421,6 +421,14 @@
       {
         "descricao": "Saque",
         "valor": 100.0
+      },
+      {
+        "descricao": "Transferência enviada para Rodrigo Tres",
+        "valor": 30.0
+      },
+      {
+        "descricao": "Transferência recebida de Rodrigo Tres",
+        "valor": 30.0
       }
     ],
     "id": 931260,
@@ -443,5 +451,46 @@
     "nome": "Claudinho do Bochecha",
     "cpf": "15189919048",
     "senha": 369258
+  },
+  {
+    "contas": [
+      {
+        "numeroDaConta": 794613,
+        "saldo": 0.0,
+        "movimentacoes": [],
+        "cliente": 429642
+      }
+    ],
+    "limiteCredito": 0.0,
+    "movimentacoes": [],
+    "id": 429642,
+    "nome": "Rodrigo Dois",
+    "cpf": "12267645685",
+    "senha": 741852
+  },
+  {
+    "contas": [
+      {
+        "numeroDaConta": 415263,
+        "saldo": 50.0,
+        "movimentacoes": [],
+        "cliente": 490777
+      }
+    ],
+    "limiteCredito": 0.0,
+    "movimentacoes": [
+      {
+        "descricao": "Transferência recebida de Rodrigo Soares",
+        "valor": 30.0
+      },
+      {
+        "descricao": "Transferência enviada para Rodrigo Soares",
+        "valor": 30.0
+      }
+    ],
+    "id": 490777,
+    "nome": "Rodrigo Tres",
+    "cpf": "12267645682",
+    "senha": 976431
   }
 ]
