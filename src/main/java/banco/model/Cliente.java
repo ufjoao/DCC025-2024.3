@@ -1,3 +1,7 @@
+//João Alexandre dos Santos Nunes – 202235029
+//João Antônio Fonseca e Almeida – 201935010
+//Rodrigo da Silva Soares – 201765218AB
+
 package banco.model;
 
 import banco.persistence.Persistence;
@@ -41,17 +45,17 @@ public class Cliente extends Usuario implements Serializable {
     public List<Conta> getContas() {
         return contas;
     }
-
+    
     public Conta retornaConta(int numeroDaConta) {
-        for (int i = 0; i < contas.size(); i++) {
-            if (verificaNumeroDaConta(numeroDaConta)) {
-                return contas.get(i);
-            }
+    for (Conta conta : contas) {
+        if (conta.getNumeroDaConta() == numeroDaConta) {
+            return conta; // Retorna a conta encontrada
         }
-
-        System.out.println("Conta não encontrada");
-        return null;
     }
+
+    System.out.println("Conta não encontrada");
+    return null; // Caso não encontre a conta
+}
 
     public void setContas(List<Conta> contas) {
         this.contas = contas;
@@ -87,8 +91,13 @@ public class Cliente extends Usuario implements Serializable {
     }
 
     public boolean verificaNumeroDaConta(int numeroDaConta) {
-        return contas.get(contas.indexOf(this)).verificaNumeroDaConta(numeroDaConta);
+    for (Conta conta : contas) {
+        if (conta.getNumeroDaConta() == numeroDaConta) {
+            return true; // Encontrou a conta
+        }
     }
+    return false; // Conta não encontrada
+}
 
     public void registrarMovimentacao(String descricao, float valor) {
         Movimentacao movimentacao = new Movimentacao(descricao, valor);

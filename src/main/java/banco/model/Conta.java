@@ -1,3 +1,7 @@
+//João Alexandre dos Santos Nunes – 202235029
+//João Antônio Fonseca e Almeida – 201935010
+//Rodrigo da Silva Soares – 201765218AB
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -88,7 +92,7 @@ public class Conta implements Serializable {
         movimentacoes = movimentacoesTotais;
     }
 
-    boolean verificaNumeroDaConta(int numeroDaConta) {
+    public boolean verificaNumeroDaConta(int numeroDaConta) {
         return this.numeroDaConta == numeroDaConta;
     }
 
@@ -131,5 +135,10 @@ public class Conta implements Serializable {
         }
 
         return extrato.toString();
+    }
+
+    public void setDono(Cliente dono) 
+    {
+        
     }
 }
