@@ -312,6 +312,8 @@ if (solicitacao != null) {
             }
         }
     }
+    
+    
 
     private void realizarSaque(Cliente cliente, int numeroDaConta) {
         // Cria um painel para pedir a senha

@@ -119,18 +119,25 @@ public class Validador
     }
 
     
-    public static boolean senhaValida(char[] senha)
-{
-    // Corrigindo a conversão do array de char para String
+    public static boolean senhaValida(char[] senha) {
     String senhaStr = new String(senha);
     
-    if(senhaStr.length() != 6)
+    if (senhaStr.length() != 6)
         return false;
-    if(temSequencia(senhaStr))
+    if (temSequencia(senhaStr))
+        return false;
+    if (temTodosCaracteresIguais(senhaStr))  // Adicionando verificação de numeros iguais
         return false;
     
     return true;
 }
+
+// Método para verificar se todos os caracteres são iguais
+private static boolean temTodosCaracteresIguais(String senha) 
+{
+    return senha.matches("(\\d)\\1{5}");
+}
+
 
     
 // Validação da senha (como inteiro)
@@ -203,14 +210,39 @@ public class Validador
     }
 
     // Verifica se a senha tem números em sequência (ex: 123456)
+//    private static boolean temSequencia(String senha) {
+//        for (int i = 0; i < senha.length() - 1; i++) {
+//            if (senha.charAt(i) + 1 != senha.charAt(i + 1)) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
     private static boolean temSequencia(String senha) {
-        for (int i = 0; i < senha.length() - 1; i++) {
-            if (senha.charAt(i) + 1 != senha.charAt(i + 1)) {
-                return false;
-            }
+    int crescente = 1;
+    int decrescente = 1;
+    
+    for (int i = 0; i < senha.length() - 1; i++) {
+        if (senha.charAt(i) + 1 == senha.charAt(i + 1)) {
+            crescente++;
+        } else {
+            crescente = 1;
         }
-        return true;
+
+        if (senha.charAt(i) - 1 == senha.charAt(i + 1)) {
+            decrescente++;
+        } else {
+            decrescente = 1;
+        }
+
+        if (crescente >= 3 || decrescente >= 3) {
+            return true; // Senha contém uma sequência de 3 ou mais números
+        }
     }
+    
+    return false;
+}
+
 
     // Verifica se a senha tem números repetidos (ex: 111111)
     private static boolean temCaractereRepetido(String senha) {

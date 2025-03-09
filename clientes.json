@@ -327,7 +327,7 @@
     "contas": [
       {
         "numeroDaConta": 963852,
-        "saldo": 530.0,
+        "saldo": 620.0,
         "movimentacoes": [],
         "cliente": 931260
       }
@@ -429,6 +429,14 @@
       {
         "descricao": "Transferência recebida de Rodrigo Tres",
         "valor": 30.0
+      },
+      {
+        "descricao": "Transferência enviada para Rodrigo Tres",
+        "valor": 55.0
+      },
+      {
+        "descricao": "Transferência enviada para Rodrigo Tres",
+        "valor": 55.0
       }
     ],
     "id": 931260,
@@ -472,7 +480,7 @@
     "contas": [
       {
         "numeroDaConta": 415263,
-        "saldo": 50.0,
+        "saldo": 160.0,
         "movimentacoes": [],
         "cliente": 490777
       }
@@ -486,11 +494,51 @@
       {
         "descricao": "Transferência enviada para Rodrigo Soares",
         "valor": 30.0
+      },
+      {
+        "descricao": "Transferência recebida de Rodrigo Soares",
+        "valor": 55.0
+      },
+      {
+        "descricao": "Transferência recebida de Rodrigo Soares",
+        "valor": 55.0
       }
     ],
     "id": 490777,
     "nome": "Rodrigo Tres",
     "cpf": "12267645682",
     "senha": 976431
+  },
+  {
+    "contas": [
+      {
+        "numeroDaConta": 164379,
+        "saldo": 0.0,
+        "movimentacoes": [],
+        "cliente": 898139
+      }
+    ],
+    "limiteCredito": 0.0,
+    "movimentacoes": [],
+    "id": 898139,
+    "nome": "Rodrigo Senha",
+    "cpf": "12267645683",
+    "senha": 147258
+  },
+  {
+    "contas": [
+      {
+        "numeroDaConta": 736149,
+        "saldo": 0.0,
+        "movimentacoes": [],
+        "cliente": 614147
+      }
+    ],
+    "limiteCredito": 0.0,
+    "movimentacoes": [],
+    "id": 614147,
+    "nome": "Rodrigo Senha Dois",
+    "cpf": "12267645611",
+    "senha": 147852
   }
 ]

@@ -76,17 +76,6 @@ public class Persistence {
     }
     return null;  // Caso não encontre uma solicitação pendente
 }
-
-
-// Método para salvar solicitações em um arquivo JSON
-//    public static void salvarSolicitacoesJson() {
-//        try (Writer writer = new FileWriter("solicitacoes.json")) {
-//            Gson gson = new Gson();
-//            gson.toJson(solicitacoes, writer);  // Converte a lista para JSON e escreve no arquivo
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
     
     public static void salvarSolicitacoesJson() {
     try (Writer writer = new FileWriter("solicitacoes.json")) {

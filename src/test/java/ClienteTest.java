@@ -61,7 +61,7 @@ public class ClienteTest {
         assertEquals(500, saldo, 0.001);
     }
 
-    //erro, não consegui entender
+    //erro, não consegui resolver getDono é null
     @Test
     public void testGerarExtratoSemMovimentacoes() {
         // Gerando extrato sem movimentações
