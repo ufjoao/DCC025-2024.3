@@ -23,7 +23,7 @@ public class ClienteTest {
         cliente = new Cliente("João", "12345678901", 1234);
         
         // Criando uma conta e associando ao cliente
-        conta = new Conta(98765, cliente.getId());
+        conta = new Conta(719346, cliente.getId());
         cliente.adicionarConta(conta);
     }
 
@@ -38,7 +38,7 @@ public class ClienteTest {
     @Test
     public void testRetornaConta() {
         // Testando o retorno da conta a partir do número da conta
-        Conta contaRetornada = cliente.retornaConta(98765);
+        Conta contaRetornada = cliente.retornaConta(719346);
         assertNotNull(contaRetornada);
         assertEquals(conta, contaRetornada);
     }
@@ -69,7 +69,8 @@ public class ClienteTest {
         assertEquals("Conta sem movimentações.", extrato);
     }
 
-    //erro, não consegui entender... a lista é iniciada vazia, então não é nula
+    //erro, não consegui entender... a lista é iniciada vazia nas três versões do construtor, então não é nula
+    //pode ser que não seja encontrada num outro arquivo externo
     @Test
     public void testGerarExtratoComMovimentacoes() {
         // Registrando movimentações
@@ -97,7 +98,7 @@ public class ClienteTest {
     @Test
     public void testVerificaNumeroDaConta() {
         // Verificando a conta válida
-        boolean contaValida = cliente.verificaNumeroDaConta(98765);
+        boolean contaValida = cliente.verificaNumeroDaConta(719346);
         assertTrue(contaValida);
 
         // Verificando conta inválida
